@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tavola periodica – campioni</title>
+  <style>
+:root{
+  --cell-size: clamp(60px, 5.5vw, 90px);
+  --gap: 4px;
+  --border-radius: 6px;
+  --border-colour: rgba(0,0,0,0.2);
+  --empty-bg: #f5f5f5;
+  --empty-bg-dark: #222;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --border-colour: rgba(255,255,255,0.25);
+    --empty-bg: #20252a;
+    --empty-bg-dark: #111;
+  }
+}
+body{
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--empty-bg-dark);
+  color: #eee;
+}
+h1{
+  margin: 16px;
+  font-size: 20px;
+  text-align: center;
+}
+.table{
+  display: grid;
+  grid-template-columns: repeat(18, var(--cell-size));
+  grid-auto-rows: var(--cell-size);
+  gap: var(--gap);
+  justify-content: center;
+  padding: 16px;
+}
+.cell{
+  position: relative;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 1px solid var(--border-colour);
+  border-radius: var(--border-radius);
+  background: var(--empty-bg);
+}
+.cell.empty{
+  background: transparent;
+  border: none;
+}
+.cell.spacer{
+  height: calc(var(--cell-size) / 2);
+  background: transparent;
+  border: none;
+}
+.cell.element{
+  /* sempre sfondo chiaro e testo nero per leggibilità */
+  background: #ffffff;
+  color: #000000;
+  overflow: hidden;
+  cursor: default;
+}
+/* nessuna variazione in dark mode: il testo resta nero */
+.symbol{
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 4px 4px 2px 4px;
+  color: #000000;
+}
+/* atomic number */
+.number{
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 9px;
+  color: #000000;
+  pointer-events: none;
+}
+.samples{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  width: 100%;
+  height: calc(100% - 24px);
+}
+.samples .quarter{
+  position: relative;
+  border: 1px solid var(--border-colour);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #000000;
+}
+.samples .quarter .sidx{
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 9px;
+  color: #444444;
+  pointer-events: none;
+}
+  /* disable hover tooltip when popups are used */
+  .cell[data-tip]:hover::after{
+    display: none;
+  }
+.quarter.filtered{
+  opacity: 0.15;
+}
+.legend-item{
+  cursor: pointer;
+}
+.legend-item.active{
+  box-shadow: 0 0 0 2px rgba(0,120,212,0.8);
+}
+.legend{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px 24px 16px;
+  font-size: 13px;
+}
+.legend-item{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--empty-bg);
+  border: 1px solid var(--border-colour);
+  border-radius: var(--border-radius);
+  padding: 2px 6px;
+  color: #000000; /* testi neri sui bottoni della legenda */
+}
+.legend-colour{
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  display: inline-block;
+  border: 1px solid var(--border-colour);
+}
+  /* overlay and popup styles */
+  .overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 999;
+  }
+  .overlay.visible{
+    display: block;
+  }
+  .popup{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    color: #000000;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    max-width: 320px;
+    min-width: 260px;
+    display: none;
+    z-index: 1000;
+  }
+  .popup.visible{
+    display: block;
+  }
+</style>
+</head>
+<body>
+  <h1>Tavola periodica – campioni</h1>
+  <div class="table">
+    <div class="cell element" data-tip="Hydrogen
+Z=1
+1: da comprare; fiala a bassa pressione" data-z="1"><div class="number">1</div><div class="symbol">H</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala a bassa pressione"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell element" data-tip="Helium
+Z=2
+1: da comprare; fiala a bassa pressione" data-z="2"><div class="number">2</div><div class="symbol">He</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala a bassa pressione"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Lithium
+Z=3" data-z="3"><div class="number">3</div><div class="symbol">Li</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Beryllium
+Z=4" data-z="4"><div class="number">4</div><div class="symbol">Be</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell element" data-tip="Boron
+Z=5
+1: da comprare; campione puro" data-z="5"><div class="number">5</div><div class="symbol">B</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione puro"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Carbon
+Z=6" data-z="6"><div class="number">6</div><div class="symbol">C</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Nitrogen
+Z=7
+1: da comprare; fiala a bassa pressione" data-z="7"><div class="number">7</div><div class="symbol">N</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala a bassa pressione"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Oxygen
+Z=8
+1: da comprare; fiala a bassa pressione" data-z="8"><div class="number">8</div><div class="symbol">O</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala a bassa pressione"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Fluorine
+Z=9" data-z="9"><div class="number">9</div><div class="symbol">F</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Neon
+Z=10
+1: da comprare; fiala a bassa pressione
+2: da comprare; nixie" data-z="10"><div class="number">10</div><div class="symbol">Ne</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala a bassa pressione"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | nixie"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Sodium
+Z=11" data-z="11"><div class="number">11</div><div class="symbol">Na</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Magnesium
+Z=12
+1: ottenuto; Lampadine
+2: in arrivo; temperino" data-z="12"><div class="number">12</div><div class="symbol">Mg</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Lampadine"><span class="sidx">1</span></div><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | temperino"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell element" data-tip="Aluminium
+Z=13
+1: ottenuto; Monete" data-z="13"><div class="number">13</div><div class="symbol">Al</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Monete"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Silicon
+Z=14
+1: ottenuto; Chip ALICE
+2: in arrivo; aerogel" data-z="14"><div class="number">14</div><div class="symbol">Si</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Chip ALICE"><span class="sidx">1</span></div><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | aerogel"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Phosphorus
+Z=15" data-z="15"><div class="number">15</div><div class="symbol">P</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Sulfur
+Z=16
+1: in arrivo; Cannelli medicina alternativa" data-z="16"><div class="number">16</div><div class="symbol">S</div><div class="samples"><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | Cannelli medicina alternativa"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Chlorine
+Z=17
+1: da comprare; fiala cloro liquido" data-z="17"><div class="number">17</div><div class="symbol">Cl</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala cloro liquido"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Argon
+Z=18
+1: da comprare; fiala a bassa pressione" data-z="18"><div class="number">18</div><div class="symbol">Ar</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala a bassa pressione"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Potassium
+Z=19" data-z="19"><div class="number">19</div><div class="symbol">K</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Calcium
+Z=20
+1: da comprare; campione puro nova" data-z="20"><div class="number">20</div><div class="symbol">Ca</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione puro nova"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Scandium
+Z=21
+1: da comprare; campione set terre rare" data-z="21"><div class="number">21</div><div class="symbol">Sc</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Titanium
+Z=22" data-z="22"><div class="number">22</div><div class="symbol">Ti</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Vanadium
+Z=23
+1: da comprare; campione puro
+2: da comprare; vanadinite
+3: ottenuto; Chiavi CrV" data-z="23"><div class="number">23</div><div class="symbol">V</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione puro"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | vanadinite"><span class="sidx">2</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Chiavi CrV"><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Chromium
+Z=24
+3: ottenuto; Adattatore per chiavi CrV
+4: ottenuto; Pigmento" data-z="24"><div class="number">24</div><div class="symbol">Cr</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Adattatore per chiavi CrV"><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Manganese
+Z=25
+1: ottenuto; Calicino di vetro
+2: da comprare; campione puro
+3: da comprare; ceramica decorata MnO2
+4: da fare; Pigmento" data-z="25"><div class="number">25</div><div class="symbol">Mn</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Calicino di vetro"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione puro"><span class="sidx">2</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | ceramica decorata MnO2"><span class="sidx">3</span></div><div class="quarter state-da-fare" style="background:#d5a6bd" data-state="da-fare" data-tip="da fare | Pigmento"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Iron
+Z=26
+1: ottenuto; Ferro di cavallo e chiodo antico
+4: ottenuto; Pigmento" data-z="26"><div class="number">26</div><div class="symbol">Fe</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Ferro di cavallo e chiodo antico"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Cobalt
+Z=27
+1: ottenuto; Lampada ad olio
+4: ottenuto; Pigmento x2" data-z="27"><div class="number">27</div><div class="symbol">Co</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Lampada ad olio"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento x2"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Nickel
+Z=28" data-z="28"><div class="number">28</div><div class="symbol">Ni</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Copper
+Z=29
+4: ottenuto; Pigmento x2" data-z="29"><div class="number">29</div><div class="symbol">Cu</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento x2"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Zinc
+Z=30
+1: in arrivo; Batteria Zn-aria
+2: in arrivo; Batteria Zn-C
+4: ottenuto; Pigmento" data-z="30"><div class="number">30</div><div class="symbol">Zn</div><div class="samples"><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | Batteria Zn-aria"><span class="sidx">1</span></div><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | Batteria Zn-C"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Gallium
+Z=31
+1: da comprare; termometro galinstano" data-z="31"><div class="number">31</div><div class="symbol">Ga</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | termometro galinstano"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Germanium
+Z=32" data-z="32"><div class="number">32</div><div class="symbol">Ge</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Arsenic
+Z=33
+4: ottenuto; Pigmento x2" data-z="33"><div class="number">33</div><div class="symbol">As</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento x2"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Selenium
+Z=34
+1: ottenuto; Barattolo vetro
+4: ottenuto; Pigmento" data-z="34"><div class="number">34</div><div class="symbol">Se</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Barattolo vetro"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Bromine
+Z=35
+1: da comprare; fiala da fare" data-z="35"><div class="number">35</div><div class="symbol">Br</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala da fare"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Krypton
+Z=36
+1: da comprare; fiala a bassa pressione" data-z="36"><div class="number">36</div><div class="symbol">Kr</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala a bassa pressione"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Rubidium
+Z=37" data-z="37"><div class="number">37</div><div class="symbol">Rb</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Strontium
+Z=38
+1: da comprare; campione puro nova
+2: in arrivo; set alluminato di stronzio" data-z="38"><div class="number">38</div><div class="symbol">Sr</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione puro nova"><span class="sidx">1</span></div><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | set alluminato di stronzio"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Yttrium
+Z=39
+1: da comprare; candela motore
+2: da comprare; campione set terre rare" data-z="39"><div class="number">39</div><div class="symbol">Y</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | candela motore"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Zirconium
+Z=40" data-z="40"><div class="number">40</div><div class="symbol">Zr</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Niobium
+Z=41" data-z="41"><div class="number">41</div><div class="symbol">Nb</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Molybdenum
+Z=42
+1: da comprare; barchetta da evaporazione" data-z="42"><div class="number">42</div><div class="symbol">Mo</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | barchetta da evaporazione"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Technetium
+Z=43
+1: da comprare; Vial Tecnezio" data-z="43"><div class="number">43</div><div class="symbol">Tc</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | Vial Tecnezio"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Ruthenium
+Z=44" data-z="44"><div class="number">44</div><div class="symbol">Ru</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Rhodium
+Z=45
+1: ottenuto; Atrezzi dentistici" data-z="45"><div class="number">45</div><div class="symbol">Rh</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Atrezzi dentistici"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Palladium
+Z=46
+1: da comprare; francobolli Tonga" data-z="46"><div class="number">46</div><div class="symbol">Pd</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | francobolli Tonga"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Silver
+Z=47" data-z="47"><div class="number">47</div><div class="symbol">Ag</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Cadmium
+Z=48
+1: in arrivo; Batteria Ni-Cd
+4: ottenuto; Pigmento" data-z="48"><div class="number">48</div><div class="symbol">Cd</div><div class="samples"><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | Batteria Ni-Cd"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Indium
+Z=49" data-z="49"><div class="number">49</div><div class="symbol">In</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Tin
+Z=50" data-z="50"><div class="number">50</div><div class="symbol">Sn</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Antimony
+Z=51" data-z="51"><div class="number">51</div><div class="symbol">Sb</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Tellurium
+Z=52" data-z="52"><div class="number">52</div><div class="symbol">Te</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Iodine
+Z=53" data-z="53"><div class="number">53</div><div class="symbol">I</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Xenon
+Z=54
+1: da comprare; fiala a bassa pressione" data-z="54"><div class="number">54</div><div class="symbol">Xe</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | fiala a bassa pressione"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Caesium
+Z=55
+1: ottenuto; Fotomoltiplicatore" data-z="55"><div class="number">55</div><div class="symbol">Cs</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Fotomoltiplicatore"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Barium
+Z=56
+1: ottenuto; Valvola
+2: da comprare; campione puro nova" data-z="56"><div class="number">56</div><div class="symbol">Ba</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Valvola"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione puro nova"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell empty"></div><div class="cell element" data-tip="Hafnium
+Z=72" data-z="72"><div class="number">72</div><div class="symbol">Hf</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Tantalum
+Z=73
+1: da comprare; filo da sutura" data-z="73"><div class="number">73</div><div class="symbol">Ta</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | filo da sutura"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Tungsten
+Z=74
+1: ottenuto; Lampadina" data-z="74"><div class="number">74</div><div class="symbol">W</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Lampadina"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Rhenium
+Z=75" data-z="75"><div class="number">75</div><div class="symbol">Re</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Osmium
+Z=76" data-z="76"><div class="number">76</div><div class="symbol">Os</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Iridium
+Z=77
+1: da comprare; candela motore" data-z="77"><div class="number">77</div><div class="symbol">Ir</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | candela motore"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Platinum
+Z=78" data-z="78"><div class="number">78</div><div class="symbol">Pt</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Gold
+Z=79
+1: da comprare; Pepite
+2: in arrivo; Foglie" data-z="79"><div class="number">79</div><div class="symbol">Au</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | Pepite"><span class="sidx">1</span></div><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | Foglie"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Mercury
+Z=80
+1: ottenuto; campione puro
+2: da comprare; valvola rettificatrice
+3: da comprare; scatolina cinabro
+4: ottenuto; Pigmento" data-z="80"><div class="number">80</div><div class="symbol">Hg</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | campione puro"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | valvola rettificatrice"><span class="sidx">2</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | scatolina cinabro"><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Thallium
+Z=81" data-z="81"><div class="number">81</div><div class="symbol">Tl</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Lead
+Z=82
+1: da comprare; cristallo galena per radio
+2: da comprare; Glandes Plumbeae
+4: ottenuto; Pigmento" data-z="82"><div class="number">82</div><div class="symbol">Pb</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | cristallo galena per radio"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | Glandes Plumbeae"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Pigmento"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Bismuth
+Z=83
+1: da comprare; cristallo da fare" data-z="83"><div class="number">83</div><div class="symbol">Bi</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | cristallo da fare"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Polonium
+Z=84
+1: da comprare; candela motore
+2: da comprare; pennello antistatica" data-z="84"><div class="number">84</div><div class="symbol">Po</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | candela motore"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | pennello antistatica"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Astatine
+Z=85" data-z="85"><div class="number">85</div><div class="symbol">At</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Radon
+Z=86" data-z="86"><div class="number">86</div><div class="symbol">Rn</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Francium
+Z=87" data-z="87"><div class="number">87</div><div class="symbol">Fr</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Radium
+Z=88
+1: ottenuto; Sveglia" data-z="88"><div class="number">88</div><div class="symbol">Ra</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Sveglia"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell empty"></div><div class="cell element" data-tip="Rutherfordium
+Z=104" data-z="104"><div class="number">104</div><div class="symbol">Rf</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Dubnium
+Z=105
+1: da comprare; Cartolina Dubna
+2: da comprare; Spilla dubna" data-z="105"><div class="number">105</div><div class="symbol">Db</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | Cartolina Dubna"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | Spilla dubna"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Seaborgium
+Z=106" data-z="106"><div class="number">106</div><div class="symbol">Sg</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Bohrium
+Z=107" data-z="107"><div class="number">107</div><div class="symbol">Bh</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Hassium
+Z=108" data-z="108"><div class="number">108</div><div class="symbol">Hs</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Meitnerium
+Z=109" data-z="109"><div class="number">109</div><div class="symbol">Mt</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Darmstadtium
+Z=110" data-z="110"><div class="number">110</div><div class="symbol">Ds</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Roentgenium
+Z=111
+1: da comprare; Medaglia Chernobyl" data-z="111"><div class="number">111</div><div class="symbol">Rg</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | Medaglia Chernobyl"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Copernicium
+Z=112" data-z="112"><div class="number">112</div><div class="symbol">Cn</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Nihonium
+Z=113" data-z="113"><div class="number">113</div><div class="symbol">Nh</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Flerovium
+Z=114" data-z="114"><div class="number">114</div><div class="symbol">Fl</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Moscovium
+Z=115" data-z="115"><div class="number">115</div><div class="symbol">Mc</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Livermorium
+Z=116" data-z="116"><div class="number">116</div><div class="symbol">Lv</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Tennessine
+Z=117" data-z="117"><div class="number">117</div><div class="symbol">Ts</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Oganesson
+Z=118" data-z="118"><div class="number">118</div><div class="symbol">Og</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell spacer empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell element" data-tip="Lanthanum
+Z=57
+1: da comprare; campione set terre rare" data-z="57"><div class="number">57</div><div class="symbol">La</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Cerium
+Z=58
+1: da comprare; campione set terre rare" data-z="58"><div class="number">58</div><div class="symbol">Ce</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Praseodymium
+Z=59
+1: da comprare; vetro NdPr
+2: da comprare; campione set terre rare" data-z="59"><div class="number">59</div><div class="symbol">Pr</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | vetro NdPr"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Neodymium
+Z=60
+1: ottenuto; Disco rigido
+2: da comprare; campione set terre rare
+3: ottenuto; magnete" data-z="60"><div class="number">60</div><div class="symbol">Nd</div><div class="samples"><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | Disco rigido"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter state-ottenuto" style="background:#93c47d" data-state="ottenuto" data-tip="ottenuto | magnete"><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Promethium
+Z=61" data-z="61"><div class="number">61</div><div class="symbol">Pm</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Samarium
+Z=62
+1: da comprare; campione set terre rare" data-z="62"><div class="number">62</div><div class="symbol">Sm</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Europium
+Z=63
+1: da comprare; vetro drogato ossido
+2: da comprare; campione set terre rare" data-z="63"><div class="number">63</div><div class="symbol">Eu</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | vetro drogato ossido"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Gadolinium
+Z=64
+1: da comprare; campione set terre rare" data-z="64"><div class="number">64</div><div class="symbol">Gd</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Terbium
+Z=65
+1: da comprare; casso SoundBug
+2: da comprare; campione set terre rare" data-z="65"><div class="number">65</div><div class="symbol">Tb</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | casso SoundBug"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Dysprosium
+Z=66
+1: da comprare; campione set terre rare" data-z="66"><div class="number">66</div><div class="symbol">Dy</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Holmium
+Z=67
+1: da comprare; vetro hob445
+2: da comprare; campione set terre rare" data-z="67"><div class="number">67</div><div class="symbol">Ho</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | vetro hob445"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Erbium
+Z=68
+1: da comprare; ossido
+2: da comprare; campione set terre rare" data-z="68"><div class="number">68</div><div class="symbol">Er</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | ossido"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Thulium
+Z=69
+1: da comprare; vetro drogato ossido
+2: da comprare; campione set terre rare" data-z="69"><div class="number">69</div><div class="symbol">Tm</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | vetro drogato ossido"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Ytterbium
+Z=70
+1: da comprare; minerale xenotima
+2: da comprare; campione set terre rare" data-z="70"><div class="number">70</div><div class="symbol">Yb</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | minerale xenotima"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Lutetium
+Z=71
+1: da comprare; cristallo LYSO
+2: da comprare; campione set terre rare" data-z="71"><div class="number">71</div><div class="symbol">Lu</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | cristallo LYSO"><span class="sidx">1</span></div><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | campione set terre rare"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell element" data-tip="Actinium
+Z=89" data-z="89"><div class="number">89</div><div class="symbol">Ac</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Thorium
+Z=90
+1: in arrivo; Elettrodi TiG 2% toriati" data-z="90"><div class="number">90</div><div class="symbol">Th</div><div class="samples"><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | Elettrodi TiG 2% toriati"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Protactinium
+Z=91" data-z="91"><div class="number">91</div><div class="symbol">Pa</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Uranium
+Z=92
+1: da comprare; Vetro all&#x27;uranio" data-z="92"><div class="number">92</div><div class="symbol">U</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | Vetro all&amp;#x27;uranio"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Neptunium
+Z=93" data-z="93"><div class="number">93</div><div class="symbol">Np</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Plutonium
+Z=94
+1: da comprare; pellet " data-z="94"><div class="number">94</div><div class="symbol">Pu</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | pellet "><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Americium
+Z=95" data-z="95"><div class="number">95</div><div class="symbol">Am</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Curium
+Z=96" data-z="96"><div class="number">96</div><div class="symbol">Cm</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Berkelium
+Z=97" data-z="97"><div class="number">97</div><div class="symbol">Bk</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Californium
+Z=98" data-z="98"><div class="number">98</div><div class="symbol">Cf</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Einsteinium
+Z=99" data-z="99"><div class="number">99</div><div class="symbol">Es</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Fermium
+Z=100" data-z="100"><div class="number">100</div><div class="symbol">Fm</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Mendelevium
+Z=101
+1: da comprare; Rublo Mendeleev" data-z="101"><div class="number">101</div><div class="symbol">Md</div><div class="samples"><div class="quarter state-da-comprare" style="background:#e06666" data-state="da-comprare" data-tip="da comprare | Rublo Mendeleev"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Nobelium
+Z=102" data-z="102"><div class="number">102</div><div class="symbol">No</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Lawrencium
+Z=103" data-z="103"><div class="number">103</div><div class="symbol">Lr</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div>
+  </div>
+  <div class="legend">
+    <div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare</div><div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo</div><div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto</div><div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato</div><div class="legend-item" data-state="da-fare"><span class="legend-colour" style="background:#d5a6bd"></span>da fare</div>
+  </div>
+  <div id="overlay" class="overlay"></div>
+  <div id="popup" class="popup"></div>
+
+<script>
+const elementsData = {
+    1: {"z": 1, "symbol": "H", "name": "Hydrogen", "samples": [{"state": "da comprare", "value": "fiala a bassa pressione"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    2: {"z": 2, "symbol": "He", "name": "Helium", "samples": [{"state": "da comprare", "value": "fiala a bassa pressione"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    3: {"z": 3, "symbol": "Li", "name": "Lithium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    4: {"z": 4, "symbol": "Be", "name": "Beryllium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    5: {"z": 5, "symbol": "B", "name": "Boron", "samples": [{"state": "da comprare", "value": "campione puro"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    6: {"z": 6, "symbol": "C", "name": "Carbon", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    7: {"z": 7, "symbol": "N", "name": "Nitrogen", "samples": [{"state": "da comprare", "value": "fiala a bassa pressione"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    8: {"z": 8, "symbol": "O", "name": "Oxygen", "samples": [{"state": "da comprare", "value": "fiala a bassa pressione"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    9: {"z": 9, "symbol": "F", "name": "Fluorine", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    10: {"z": 10, "symbol": "Ne", "name": "Neon", "samples": [{"state": "da comprare", "value": "fiala a bassa pressione"}, {"state": "da comprare", "value": "nixie"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    11: {"z": 11, "symbol": "Na", "name": "Sodium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    12: {"z": 12, "symbol": "Mg", "name": "Magnesium", "samples": [{"state": "ottenuto", "value": "Lampadine"}, {"state": "in arrivo", "value": "temperino"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    13: {"z": 13, "symbol": "Al", "name": "Aluminium", "samples": [{"state": "ottenuto", "value": "Monete"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    14: {"z": 14, "symbol": "Si", "name": "Silicon", "samples": [{"state": "ottenuto", "value": "Chip ALICE"}, {"state": "in arrivo", "value": "aerogel"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    15: {"z": 15, "symbol": "P", "name": "Phosphorus", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    16: {"z": 16, "symbol": "S", "name": "Sulfur", "samples": [{"state": "in arrivo", "value": "Cannelli medicina alternativa"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    17: {"z": 17, "symbol": "Cl", "name": "Chlorine", "samples": [{"state": "da comprare", "value": "fiala cloro liquido"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    18: {"z": 18, "symbol": "Ar", "name": "Argon", "samples": [{"state": "da comprare", "value": "fiala a bassa pressione"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    19: {"z": 19, "symbol": "K", "name": "Potassium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    20: {"z": 20, "symbol": "Ca", "name": "Calcium", "samples": [{"state": "da comprare", "value": "campione puro nova"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    21: {"z": 21, "symbol": "Sc", "name": "Scandium", "samples": [{"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    22: {"z": 22, "symbol": "Ti", "name": "Titanium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    23: {"z": 23, "symbol": "V", "name": "Vanadium", "samples": [{"state": "da comprare", "value": "campione puro"}, {"state": "da comprare", "value": "vanadinite"}, {"state": "ottenuto", "value": "Chiavi CrV"}, {"state": "", "value": ""}]},
+    24: {"z": 24, "symbol": "Cr", "name": "Chromium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Adattatore per chiavi CrV"}, {"state": "ottenuto", "value": "Pigmento"}]},
+    25: {"z": 25, "symbol": "Mn", "name": "Manganese", "samples": [{"state": "ottenuto", "value": "Calicino di vetro"}, {"state": "da comprare", "value": "campione puro"}, {"state": "da comprare", "value": "ceramica decorata MnO2"}, {"state": "da fare", "value": "Pigmento"}]},
+    26: {"z": 26, "symbol": "Fe", "name": "Iron", "samples": [{"state": "ottenuto", "value": "Ferro di cavallo e chiodo antico"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Pigmento"}]},
+    27: {"z": 27, "symbol": "Co", "name": "Cobalt", "samples": [{"state": "ottenuto", "value": "Lampada ad olio"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Pigmento x2"}]},
+    28: {"z": 28, "symbol": "Ni", "name": "Nickel", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    29: {"z": 29, "symbol": "Cu", "name": "Copper", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Pigmento x2"}]},
+    30: {"z": 30, "symbol": "Zn", "name": "Zinc", "samples": [{"state": "in arrivo", "value": "Batteria Zn-aria"}, {"state": "in arrivo", "value": "Batteria Zn-C"}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Pigmento"}]},
+    31: {"z": 31, "symbol": "Ga", "name": "Gallium", "samples": [{"state": "da comprare", "value": "termometro galinstano"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    32: {"z": 32, "symbol": "Ge", "name": "Germanium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    33: {"z": 33, "symbol": "As", "name": "Arsenic", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Pigmento x2"}]},
+    34: {"z": 34, "symbol": "Se", "name": "Selenium", "samples": [{"state": "ottenuto", "value": "Barattolo vetro"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Pigmento"}]},
+    35: {"z": 35, "symbol": "Br", "name": "Bromine", "samples": [{"state": "da comprare", "value": "fiala da fare"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    36: {"z": 36, "symbol": "Kr", "name": "Krypton", "samples": [{"state": "da comprare", "value": "fiala a bassa pressione"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    37: {"z": 37, "symbol": "Rb", "name": "Rubidium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    38: {"z": 38, "symbol": "Sr", "name": "Strontium", "samples": [{"state": "da comprare", "value": "campione puro nova"}, {"state": "in arrivo", "value": "set alluminato di stronzio"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    39: {"z": 39, "symbol": "Y", "name": "Yttrium", "samples": [{"state": "da comprare", "value": "candela motore"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    40: {"z": 40, "symbol": "Zr", "name": "Zirconium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    41: {"z": 41, "symbol": "Nb", "name": "Niobium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    42: {"z": 42, "symbol": "Mo", "name": "Molybdenum", "samples": [{"state": "da comprare", "value": "barchetta da evaporazione"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    43: {"z": 43, "symbol": "Tc", "name": "Technetium", "samples": [{"state": "da comprare", "value": "Vial Tecnezio"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    44: {"z": 44, "symbol": "Ru", "name": "Ruthenium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    45: {"z": 45, "symbol": "Rh", "name": "Rhodium", "samples": [{"state": "ottenuto", "value": "Atrezzi dentistici"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    46: {"z": 46, "symbol": "Pd", "name": "Palladium", "samples": [{"state": "da comprare", "value": "francobolli Tonga"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    47: {"z": 47, "symbol": "Ag", "name": "Silver", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    48: {"z": 48, "symbol": "Cd", "name": "Cadmium", "samples": [{"state": "in arrivo", "value": "Batteria Ni-Cd"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Pigmento"}]},
+    49: {"z": 49, "symbol": "In", "name": "Indium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    50: {"z": 50, "symbol": "Sn", "name": "Tin", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    51: {"z": 51, "symbol": "Sb", "name": "Antimony", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    52: {"z": 52, "symbol": "Te", "name": "Tellurium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    53: {"z": 53, "symbol": "I", "name": "Iodine", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    54: {"z": 54, "symbol": "Xe", "name": "Xenon", "samples": [{"state": "da comprare", "value": "fiala a bassa pressione"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    55: {"z": 55, "symbol": "Cs", "name": "Caesium", "samples": [{"state": "ottenuto", "value": "Fotomoltiplicatore"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    56: {"z": 56, "symbol": "Ba", "name": "Barium", "samples": [{"state": "ottenuto", "value": "Valvola"}, {"state": "da comprare", "value": "campione puro nova"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    57: {"z": 57, "symbol": "La", "name": "Lanthanum", "samples": [{"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    58: {"z": 58, "symbol": "Ce", "name": "Cerium", "samples": [{"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    59: {"z": 59, "symbol": "Pr", "name": "Praseodymium", "samples": [{"state": "da comprare", "value": "vetro NdPr"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    60: {"z": 60, "symbol": "Nd", "name": "Neodymium", "samples": [{"state": "ottenuto", "value": "Disco rigido"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "ottenuto", "value": "magnete"}, {"state": "", "value": ""}]},
+    61: {"z": 61, "symbol": "Pm", "name": "Promethium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    62: {"z": 62, "symbol": "Sm", "name": "Samarium", "samples": [{"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    63: {"z": 63, "symbol": "Eu", "name": "Europium", "samples": [{"state": "da comprare", "value": "vetro drogato ossido"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    64: {"z": 64, "symbol": "Gd", "name": "Gadolinium", "samples": [{"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    65: {"z": 65, "symbol": "Tb", "name": "Terbium", "samples": [{"state": "da comprare", "value": "casso SoundBug"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    66: {"z": 66, "symbol": "Dy", "name": "Dysprosium", "samples": [{"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    67: {"z": 67, "symbol": "Ho", "name": "Holmium", "samples": [{"state": "da comprare", "value": "vetro hob445"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    68: {"z": 68, "symbol": "Er", "name": "Erbium", "samples": [{"state": "da comprare", "value": "ossido"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    69: {"z": 69, "symbol": "Tm", "name": "Thulium", "samples": [{"state": "da comprare", "value": "vetro drogato ossido"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    70: {"z": 70, "symbol": "Yb", "name": "Ytterbium", "samples": [{"state": "da comprare", "value": "minerale xenotima"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    71: {"z": 71, "symbol": "Lu", "name": "Lutetium", "samples": [{"state": "da comprare", "value": "cristallo LYSO"}, {"state": "da comprare", "value": "campione set terre rare"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    72: {"z": 72, "symbol": "Hf", "name": "Hafnium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    73: {"z": 73, "symbol": "Ta", "name": "Tantalum", "samples": [{"state": "da comprare", "value": "filo da sutura"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    74: {"z": 74, "symbol": "W", "name": "Tungsten", "samples": [{"state": "ottenuto", "value": "Lampadina"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    75: {"z": 75, "symbol": "Re", "name": "Rhenium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    76: {"z": 76, "symbol": "Os", "name": "Osmium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    77: {"z": 77, "symbol": "Ir", "name": "Iridium", "samples": [{"state": "da comprare", "value": "candela motore"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    78: {"z": 78, "symbol": "Pt", "name": "Platinum", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    79: {"z": 79, "symbol": "Au", "name": "Gold", "samples": [{"state": "da comprare", "value": "Pepite"}, {"state": "in arrivo", "value": "Foglie"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    80: {"z": 80, "symbol": "Hg", "name": "Mercury", "samples": [{"state": "ottenuto", "value": "campione puro"}, {"state": "da comprare", "value": "valvola rettificatrice"}, {"state": "da comprare", "value": "scatolina cinabro"}, {"state": "ottenuto", "value": "Pigmento"}]},
+    81: {"z": 81, "symbol": "Tl", "name": "Thallium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    82: {"z": 82, "symbol": "Pb", "name": "Lead", "samples": [{"state": "da comprare", "value": "cristallo galena per radio"}, {"state": "da comprare", "value": "Glandes Plumbeae"}, {"state": "", "value": ""}, {"state": "ottenuto", "value": "Pigmento"}]},
+    83: {"z": 83, "symbol": "Bi", "name": "Bismuth", "samples": [{"state": "da comprare", "value": "cristallo da fare"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    84: {"z": 84, "symbol": "Po", "name": "Polonium", "samples": [{"state": "da comprare", "value": "candela motore"}, {"state": "da comprare", "value": "pennello antistatica"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    85: {"z": 85, "symbol": "At", "name": "Astatine", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    86: {"z": 86, "symbol": "Rn", "name": "Radon", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    87: {"z": 87, "symbol": "Fr", "name": "Francium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    88: {"z": 88, "symbol": "Ra", "name": "Radium", "samples": [{"state": "ottenuto", "value": "Sveglia"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    89: {"z": 89, "symbol": "Ac", "name": "Actinium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    90: {"z": 90, "symbol": "Th", "name": "Thorium", "samples": [{"state": "in arrivo", "value": "Elettrodi TiG 2% toriati"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    91: {"z": 91, "symbol": "Pa", "name": "Protactinium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    92: {"z": 92, "symbol": "U", "name": "Uranium", "samples": [{"state": "da comprare", "value": "Vetro all'uranio"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    93: {"z": 93, "symbol": "Np", "name": "Neptunium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    94: {"z": 94, "symbol": "Pu", "name": "Plutonium", "samples": [{"state": "da comprare", "value": "pellet "}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    95: {"z": 95, "symbol": "Am", "name": "Americium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    96: {"z": 96, "symbol": "Cm", "name": "Curium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    97: {"z": 97, "symbol": "Bk", "name": "Berkelium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    98: {"z": 98, "symbol": "Cf", "name": "Californium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    99: {"z": 99, "symbol": "Es", "name": "Einsteinium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    100: {"z": 100, "symbol": "Fm", "name": "Fermium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    101: {"z": 101, "symbol": "Md", "name": "Mendelevium", "samples": [{"state": "da comprare", "value": "Rublo Mendeleev"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    102: {"z": 102, "symbol": "No", "name": "Nobelium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    103: {"z": 103, "symbol": "Lr", "name": "Lawrencium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    104: {"z": 104, "symbol": "Rf", "name": "Rutherfordium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    105: {"z": 105, "symbol": "Db", "name": "Dubnium", "samples": [{"state": "da comprare", "value": "Cartolina Dubna"}, {"state": "da comprare", "value": "Spilla dubna"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    106: {"z": 106, "symbol": "Sg", "name": "Seaborgium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    107: {"z": 107, "symbol": "Bh", "name": "Bohrium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    108: {"z": 108, "symbol": "Hs", "name": "Hassium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    109: {"z": 109, "symbol": "Mt", "name": "Meitnerium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    110: {"z": 110, "symbol": "Ds", "name": "Darmstadtium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    111: {"z": 111, "symbol": "Rg", "name": "Roentgenium", "samples": [{"state": "da comprare", "value": "Medaglia Chernobyl"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    112: {"z": 112, "symbol": "Cn", "name": "Copernicium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    113: {"z": 113, "symbol": "Nh", "name": "Nihonium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    114: {"z": 114, "symbol": "Fl", "name": "Flerovium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    115: {"z": 115, "symbol": "Mc", "name": "Moscovium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    116: {"z": 116, "symbol": "Lv", "name": "Livermorium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    117: {"z": 117, "symbol": "Ts", "name": "Tennessine", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
+    118: {"z": 118, "symbol": "Og", "name": "Oganesson", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]}
+  };
+document.addEventListener('DOMContentLoaded', function() {
+  const legendItems = document.querySelectorAll('.legend-item');
+  legendItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const state = this.getAttribute('data-state');
+      legendItems.forEach(li => li.classList.toggle('active', li === this));
+      document.querySelectorAll('.quarter').forEach(q => {
+        const qState = q.getAttribute('data-state');
+        if (!state || state === '') {
+          q.classList.remove('filtered');
+        } else if (qState !== state) {
+          q.classList.add('filtered');
+        } else {
+          q.classList.remove('filtered');
+        }
+      });
+    });
+  });
+  // Popup handling
+  const overlay = document.getElementById('overlay');
+  const popup = document.getElementById('popup');
+  // Close popup when clicking outside
+  overlay.addEventListener('click', function() {
+    overlay.classList.remove('visible');
+    popup.classList.remove('visible');
+  });
+  // Attach click handlers on element cells
+  document.querySelectorAll('.cell.element').forEach(el => {
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const z = this.getAttribute('data-z');
+      const info = elementsData[z];
+      if (!info) return;
+      let html = `<h2>${info.symbol} – ${info.name} (Z=${info.z})</h2><ul>`;
+      info.samples.forEach((s, i) => {
+        const st = s.state ? s.state : '-';
+        const val = s.value ? s.value : '';
+        html += `<li><strong>Campione ${i+1}:</strong> ${st} – ${val}</li>`;
+      });
+      html += '</ul>';
+      popup.innerHTML = html;
+      overlay.classList.add('visible');
+      popup.classList.add('visible');
+    });
+  });
+});
+</script>
+
+</body>
+</html>

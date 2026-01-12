@@ -517,7 +517,8 @@ def render_html(
                         [render_sample_quarter(e.samples[i], i) for i in range(4)]
                     )
                     cell_html = (
-                        f'<div class="cell element" data-tip="{tip}">'  # container with tooltip
+                        # Store the atomic number on the element container for click events
+                        f'<div class="cell element" data-tip="{tip}" data-z="{e.z}">'  # container with tooltip and data-z
                         f'<div class="number">{e.z}</div>'
                         f'<div class="symbol">{esc(e.symbol)}</div>'
                         f'<div class="samples">{quarters}</div>'
@@ -639,23 +640,10 @@ h1{
   color: #444444;
   pointer-events: none;
 }
-.cell[data-tip]:hover::after{
-  content: attr(data-tip);
-  white-space: pre;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 100%;
-  margin-top: 4px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  font-size: 12px;
-  max-width: 200px;
-  pointer-events: none;
-  z-index: 10;
-}
+  /* disable hover tooltip when popups are used */
+  .cell[data-tip]:hover::after{
+    display: none;
+  }
 .quarter.filtered{
   opacity: 0.15;
 }
@@ -681,6 +669,7 @@ h1{
   border: 1px solid var(--border-colour);
   border-radius: var(--border-radius);
   padding: 2px 6px;
+  color: #000000; /* testi neri sui bottoni della legenda */
 }
 .legend-colour{
   width: 14px;
@@ -689,31 +678,110 @@ h1{
   display: inline-block;
   border: 1px solid var(--border-colour);
 }
+  /* overlay and popup styles */
+  .overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 999;
+  }
+  .overlay.visible{
+    display: block;
+  }
+  .popup{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    color: #000000;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    max-width: 320px;
+    min-width: 260px;
+    display: none;
+    z-index: 1000;
+  }
+  .popup.visible{
+    display: block;
+  }
 """
     # JavaScript to implement clickable filters on the legend
-    script = """
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const legendItems = document.querySelectorAll('.legend-item');
-  legendItems.forEach(item => {
-    item.addEventListener('click', function() {
-      const state = this.getAttribute('data-state');
-      // toggle active class on legend items
-      legendItems.forEach(li => li.classList.toggle('active', li === this));
-      // apply filtering
-      document.querySelectorAll('.quarter').forEach(q => {
-        const qState = q.getAttribute('data-state');
-        if (!state || state === '') {
-          q.classList.remove('filtered');
-        } else if (qState !== state) {
-          q.classList.add('filtered');
-        } else {
-          q.classList.remove('filtered');
+    # Construct a JavaScript object representing all elements and their samples.
+    elements_js_entries = []
+    for elem in elements:
+        # Build a list of sample objects with state and value for JS
+        samples_js = []
+        for s in elem.samples:
+            samples_js.append({
+                "state": s.state,
+                "value": s.value,
+            })
+        entry = {
+            "z": elem.z,
+            "symbol": elem.symbol,
+            "name": elem.name,
+            "samples": samples_js,
         }
-      });
-    });
-  });
-});
+        # Encode as JSON string
+        elements_js_entries.append(f"{elem.z}: {json.dumps(entry)}")
+    elements_js_object = "{\n    " + ",\n    ".join(elements_js_entries) + "\n  }"
+
+    # JavaScript for filters and popups
+    script = f"""
+<script>
+const elementsData = {elements_js_object};
+document.addEventListener('DOMContentLoaded', function() {{
+  const legendItems = document.querySelectorAll('.legend-item');
+  legendItems.forEach(item => {{
+    item.addEventListener('click', function() {{
+      const state = this.getAttribute('data-state');
+      legendItems.forEach(li => li.classList.toggle('active', li === this));
+      document.querySelectorAll('.quarter').forEach(q => {{
+        const qState = q.getAttribute('data-state');
+        if (!state || state === '') {{
+          q.classList.remove('filtered');
+        }} else if (qState !== state) {{
+          q.classList.add('filtered');
+        }} else {{
+          q.classList.remove('filtered');
+        }}
+      }});
+    }});
+  }});
+  // Popup handling
+  const overlay = document.getElementById('overlay');
+  const popup = document.getElementById('popup');
+  // Close popup when clicking outside
+  overlay.addEventListener('click', function() {{
+    overlay.classList.remove('visible');
+    popup.classList.remove('visible');
+  }});
+  // Attach click handlers on element cells
+  document.querySelectorAll('.cell.element').forEach(el => {{
+    el.addEventListener('click', function(e) {{
+      e.stopPropagation();
+      const z = this.getAttribute('data-z');
+      const info = elementsData[z];
+      if (!info) return;
+      let html = `<h2>${{info.symbol}} – ${{info.name}} (Z=${{info.z}})</h2><ul>`;
+      info.samples.forEach((s, i) => {{
+        const st = s.state ? s.state : '-';
+        const val = s.value ? s.value : '';
+        html += `<li><strong>Campione ${{i+1}}:</strong> ${{st}} – ${{val}}</li>`;
+      }});
+      html += '</ul>';
+      popup.innerHTML = html;
+      overlay.classList.add('visible');
+      popup.classList.add('visible');
+    }});
+  }});
+}});
 </script>
 """
     html_parts = [
@@ -733,6 +801,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "  <div class=\"legend\">",
         "    " + legend_block,
         "  </div>",
+        # overlay and popup containers for click details
+        "  <div id=\"overlay\" class=\"overlay\"></div>",
+        "  <div id=\"popup\" class=\"popup\"></div>",
         script,
         "</body>",
         "</html>",
