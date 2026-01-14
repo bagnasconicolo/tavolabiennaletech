@@ -828,7 +828,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--title",
-        default="Periodic Table – Sample Tracker",
+        default="Periodic Table – Sample tracker",
         help="Title of the generated HTML document",
     )
     parser.add_argument(
