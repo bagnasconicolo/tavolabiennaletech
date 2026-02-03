@@ -37,23 +37,36 @@ show_progress 2 "$TOTAL_STEPS"
 echo ""
 echo "[3/${TOTAL_STEPS}] Pulling latest changes..."
 show_progress 3 "$TOTAL_STEPS"
+STASHED=0
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "Uncommitted changes detected; stashing before pull..."
+  git stash push -u -m "auto-stash before pull"
+  STASHED=1
+fi
 git pull
+if [[ "$STASHED" -eq 1 ]]; then
+  echo "Restoring stashed changes..."
+  git stash pop || {
+    echo "Stash apply failed; resolve conflicts and rerun."
+    exit 1
+  }
+fi
 echo "[4/${TOTAL_STEPS}] Repository updated ✅"
 show_progress 4 "$TOTAL_STEPS"
 echo ""
 echo "[5/${TOTAL_STEPS}] Syncing Apps Script..."
 show_progress 5 "$TOTAL_STEPS"
 if command -v clasp >/dev/null 2>&1; then
-  if [[ -f "${APPS_SCRIPT_DIR}/.clasp.json" ]]; then
-    (cd "$APPS_SCRIPT_DIR" && clasp pull)
+  if [[ -f ".clasp.json" ]]; then
+    clasp pull
     if git status --porcelain "$APPS_SCRIPT_DIR" | grep -q .; then
       echo "Apps Script changes detected; deploying..."
-      (cd "$APPS_SCRIPT_DIR" && clasp deploy -i "$APPS_SCRIPT_DEPLOYMENT_ID" -d "Auto deploy $(date +"%Y-%m-%d %H:%M:%S")")
+      clasp deploy -i "$APPS_SCRIPT_DEPLOYMENT_ID" -d "Auto deploy $(date +"%Y-%m-%d %H:%M:%S")"
     else
       echo "No Apps Script changes; skipping deploy."
     fi
   else
-    echo "Missing ${APPS_SCRIPT_DIR}/.clasp.json."
+    echo "Missing .clasp.json in repo root."
     echo "Run: clasp clone \"$APPS_SCRIPT_PROJECT_ID\" --rootDir \"$APPS_SCRIPT_DIR\""
   fi
 else
