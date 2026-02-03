@@ -229,7 +229,7 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
         r"\vspace{0.6em}",
         r"\begin{multicols}{2}",
         r"\small",
-    ]
+    ])
 
     for element in elements:
         filled_count = 0

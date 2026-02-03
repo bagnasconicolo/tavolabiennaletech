@@ -93,10 +93,10 @@ echo ""
 
 log_info "[3/${TOTAL_STEPS}] Aggiornamento repository"
 show_progress 3 "$TOTAL_STEPS"
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  log_warn "Working tree dirty: salto git pull"
+if git status --porcelain -- . ':!logs' ':!.DS_Store' | grep -q .; then
+  log_warn "Working tree dirty (escluse logs/.DS_Store): salto git pull"
   log_info "Git diff --stat:"
-  git diff --stat || true
+  git diff --stat -- . ':!logs' ':!.DS_Store' || true
 else
   git pull >/dev/null
 fi
