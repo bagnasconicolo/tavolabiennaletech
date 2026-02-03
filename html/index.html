@@ -74,9 +74,10 @@ body{
 }
 h1{
   margin: 0;
-  font-family: "Spectral", "Times New Roman", serif;
+  font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
   font-size: clamp(22px, 3vw, 34px);
   letter-spacing: 0.3px;
+  text-align: center;
 }
 .subtitle{
   margin: 0;
@@ -170,6 +171,15 @@ h1{
   overflow: hidden;
   cursor: default;
   transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.cell.element.filtered{
+  opacity: 0.15;
+}
+.cell.element.complete .symbol{
+  background: #b8fb89;
+  border-radius: 4px;
+  padding: 2px 4px;
+  display: inline-block;
 }
 @media (prefers-color-scheme: dark){
   .cell.element{
@@ -325,6 +335,13 @@ h1{
     margin: 0 0 8px 0;
     font-size: 18px;
   }
+  .popup h2.complete{
+    background: #93c47d;
+    color: #0b2a14;
+    padding: 6px 8px;
+    border-radius: 8px;
+    display: inline-block;
+  }
   .popup ul{
     margin: 8px 0 0 0;
     padding: 0;
@@ -383,17 +400,6 @@ h1{
         <span id="deploy-meta">Ultimo deployment: in caricamento…</span>
         <span>Legenda interattiva e dettagli per elemento</span>
         <button id="theme-toggle" class="theme-toggle" type="button">Dark mode</button>
-      </div>
-    </section>
-
-    <section class="toolbar">
-      <div class="legend">
-        <div class="legend-item active" data-state=""><span class="legend-colour" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>tutti<span class="legend-count" data-count-for="all">0</span></div>
-        <div class="legend-item" data-state="da-cercare"><span class="legend-colour" style="background:#434343"></span>da cercare<span class="legend-count" data-count-for="da-cercare">0</span></div>
-        <div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare<span class="legend-count" data-count-for="da-comprare">0</span></div>
-        <div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo<span class="legend-count" data-count-for="in-arrivo">0</span></div>
-        <div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto<span class="legend-count" data-count-for="ottenuto">0</span></div>
-        <div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato<span class="legend-count" data-count-for="inventariato">0</span></div>
       </div>
     </section>
 
@@ -763,6 +769,18 @@ Z=102
 Z=103" data-z="103"><div class="number">103</div><div class="symbol">Lr</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div>
       </div>
     </div>
+
+    <section class="toolbar">
+      <div class="legend">
+        <div class="legend-item active" data-state=""><span class="legend-colour" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>tutti<span class="legend-count" data-count-for="all">0</span></div>
+        <div class="legend-item" data-state="da-cercare"><span class="legend-colour" style="background:#434343"></span>da cercare<span class="legend-count" data-count-for="da-cercare">0</span></div>
+        <div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare<span class="legend-count" data-count-for="da-comprare">0</span></div>
+        <div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo<span class="legend-count" data-count-for="in-arrivo">0</span></div>
+        <div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto<span class="legend-count" data-count-for="ottenuto">0</span></div>
+        <div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato<span class="legend-count" data-count-for="inventariato">0</span></div>
+        <div class="legend-item" data-state="completi"><span class="legend-colour" style="background:#93c47d"></span>completi<span class="legend-count" data-count-for="completi">0</span></div>
+      </div>
+    </section>
   </div>
   <div id="overlay" class="overlay"></div>
   <div id="popup" class="popup"></div>
@@ -891,6 +909,7 @@ const elementsData = {
 document.addEventListener('DOMContentLoaded', function() {
   const legendItems = Array.from(document.querySelectorAll('.legend-item'));
   const quarters = Array.from(document.querySelectorAll('.quarter'));
+  const elementCells = Array.from(document.querySelectorAll('.cell.element'));
   const legendCounts = Array.from(document.querySelectorAll('.legend-count'));
   const deployMetaEl = document.getElementById('deploy-meta');
   const themeToggle = document.getElementById('theme-toggle');
@@ -902,6 +921,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function applyFilter(state) {
+    if (state === 'completi') {
+      quarters.forEach(q => q.classList.remove('filtered'));
+      elementCells.forEach(cell => {
+        cell.classList.toggle('filtered', !cell.classList.contains('complete'));
+      });
+      return;
+    }
+    elementCells.forEach(cell => cell.classList.remove('filtered'));
     quarters.forEach(q => {
       const qState = q.getAttribute('data-state');
       if (!state) {
@@ -937,12 +964,18 @@ document.addEventListener('DOMContentLoaded', function() {
       'da-comprare': 0,
       'in-arrivo': 0,
       'ottenuto': 0,
-      'inventariato': 0
+      'inventariato': 0,
+      'completi': 0
     };
     quarters.forEach(q => {
       const st = q.getAttribute('data-state');
       if (counts[st] !== undefined) {
         counts[st] += 1;
+      }
+    });
+    elementCells.forEach(cell => {
+      if (cell.classList.contains('complete')) {
+        counts.completi += 1;
       }
     });
     const total = Object.values(counts).reduce((acc, val) => acc + val, 0);
@@ -1060,14 +1093,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  document.querySelectorAll('.cell.element').forEach(el => {
+  function computeCompleteElements() {
+    elementCells.forEach(cell => {
+      const symbolEl = cell.querySelector('.symbol');
+      if (!symbolEl) return;
+      const inlineBg = symbolEl.style.backgroundColor || symbolEl.style.background;
+      const complete = Boolean(inlineBg && inlineBg !== 'transparent' && inlineBg !== 'initial');
+      cell.classList.toggle('complete', complete);
+    });
+  }
+
+  elementCells.forEach(el => {
     el.addEventListener('click', function(e) {
       e.stopPropagation();
       const z = this.getAttribute('data-z');
       const info = elementsData[z];
       if (!info) return;
+      const complete = this.classList.contains('complete');
       let html = `<button class="close" aria-label="Chiudi">Chiudi</button>`;
-      html += `<h2>${info.symbol} – ${info.name} (Z=${info.z})</h2><ul>`;
+      html += `<h2 class="${complete ? 'complete' : ''}">${info.symbol} – ${info.name} (Z=${info.z})</h2><ul>`;
       info.samples.forEach((s, i) => {
         const st = s.state ? s.state : 'non definito';
         const val = s.value ? s.value : '—';
@@ -1083,6 +1127,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  computeCompleteElements();
   buildStats();
   initTheme();
   loadLatestPagesDeploy();
