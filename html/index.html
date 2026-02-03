@@ -7,7 +7,7 @@
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
 :root{
-  --cell-size: clamp(58px, 5.2vw, 92px);
+  --cell-size: clamp(44px, 4.6vw, 92px);
   --gap: 6px;
   --border-radius: 10px;
   --border-colour: rgba(17, 23, 32, 0.12);
@@ -39,8 +39,8 @@ body{
   color: var(--ink);
 }
 .page{
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   padding: 20px 18px 28px;
 }
 .hero{
@@ -110,25 +110,25 @@ h1{
 }
 .table-wrap{
   margin-top: 16px;
-  padding: 16px 12px 8px;
+  padding: 12px 10px 10px;
   background: var(--paper);
   border: 1px solid var(--border-colour);
-  border-radius: 16px;
+  border-radius: 0;
   box-shadow: var(--shadow);
-  overflow-x: auto;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 .table{
   display: grid;
-  grid-template-columns: repeat(18, var(--cell-size));
-  grid-auto-rows: var(--cell-size);
+  grid-template-columns: repeat(18, minmax(0, 1fr));
   gap: var(--gap);
   justify-content: center;
-  min-width: calc(18 * var(--cell-size) + 17 * var(--gap));
+  width: 100%;
 }
 .cell{
   position: relative;
-  width: var(--cell-size);
-  height: var(--cell-size);
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border: 1px solid var(--border-colour);
   border-radius: var(--border-radius);
   background: var(--empty-bg);
@@ -140,7 +140,7 @@ h1{
   box-shadow: none;
 }
 .cell.spacer{
-  height: calc(var(--cell-size) / 2);
+  aspect-ratio: 2 / 1;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -152,6 +152,12 @@ h1{
   overflow: hidden;
   cursor: default;
   transition: transform 160ms ease, box-shadow 160ms ease;
+}
+@media (prefers-color-scheme: dark){
+  .cell.element{
+    background: #f8fafc;
+    color: #0f172a;
+  }
 }
 .cell.element:hover{
   transform: translateY(-2px);
@@ -321,7 +327,7 @@ h1{
       <h1>Tracker progressi – Piccolo Museo della Tavola Periodica</h1>
       <p class="subtitle">Biennale Tech 2026 · stato dei campioni e materiali</p>
       <div class="meta">
-        <span>Ultimo aggiornamento: Febbraio 2026</span>
+        <span id="deploy-meta">Ultimo deployment: in caricamento…</span>
         <span>Legenda interattiva e dettagli per elemento</span>
       </div>
     </section>
@@ -833,6 +839,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const legendItems = Array.from(document.querySelectorAll('.legend-item'));
   const quarters = Array.from(document.querySelectorAll('.quarter'));
   const statsEl = document.getElementById('stats');
+  const deployMetaEl = document.getElementById('deploy-meta');
   const overlay = document.getElementById('overlay');
   const popup = document.getElementById('popup');
 
@@ -896,6 +903,61 @@ document.addEventListener('DOMContentLoaded', function() {
     statsEl.innerHTML = statHtml;
   }
 
+  async function loadLatestPagesDeploy() {
+    if (!deployMetaEl) return;
+    const owner = 'bagnasconicolo';
+    const repo = 'tavolabiennaletech';
+    try {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pages/builds?per_page=1`, {
+        headers: { 'Accept': 'application/vnd.github+json' }
+      });
+      if (!res.ok) throw new Error('GitHub API error');
+      const builds = await res.json();
+      const latest = Array.isArray(builds) ? builds[0] : null;
+      if (!latest || !latest.created_at) {
+        throw new Error('No build data');
+      }
+      const dt = new Date(latest.created_at);
+      const formatted = dt.toLocaleString('it-IT', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      const status = latest.status ? String(latest.status).toLowerCase() : 'unknown';
+      let statusLabel = 'sconosciuto';
+      if (status === 'built') statusLabel = 'ok';
+      if (status === 'errored') statusLabel = 'errore';
+      if (status === 'building') statusLabel = 'in corso';
+      deployMetaEl.textContent = `Ultimo deployment: ${formatted} · stato: ${statusLabel}`;
+      return;
+    } catch (err) {
+      // Fallback: latest commit date
+      try {
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`, {
+          headers: { 'Accept': 'application/vnd.github+json' }
+        });
+        if (!res.ok) throw new Error('GitHub API error');
+        const commits = await res.json();
+        const latest = Array.isArray(commits) ? commits[0] : null;
+        const committedAt = latest?.commit?.committer?.date || latest?.commit?.author?.date;
+        if (!committedAt) throw new Error('No commit data');
+        const dt = new Date(committedAt);
+        const formatted = dt.toLocaleString('it-IT', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        deployMetaEl.textContent = `Ultimo deployment: non disponibile · ultimo commit: ${formatted}`;
+      } catch (err2) {
+        deployMetaEl.textContent = 'Ultimo deployment: non disponibile';
+      }
+    }
+  }
+
   function closePopup() {
     overlay.classList.remove('visible');
     popup.classList.remove('visible');
@@ -930,6 +992,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   buildStats();
+  loadLatestPagesDeploy();
 });
 </script>
 
