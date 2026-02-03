@@ -3,7 +3,7 @@
  *
  * Colonna A: simbolo (una riga per ciascun elemento, da 1 a 118)
  * Colonne B–E: quattro campioni (celle colorate secondo la legenda)
- * Colonna G2:G6: legenda; ogni cella contiene un’etichetta e il colore di sfondo
+ * Colonna G2:G?: legenda; ogni cella contiene un’etichetta e il colore di sfondo
  *
  * Restituisce un JSON con:
  *  - elements: lista di elementi (row, symbol, samples[ { value, state, color } ])
@@ -29,9 +29,11 @@ function doGet(e) {
   var maxRows = sh.getMaxRows();
   var vals = sh.getRange(1, 1, maxRows, 5).getValues();
   var bgs  = sh.getRange(1, 1, maxRows, 5).getBackgrounds();
-  // legenda G2:G6: etichette e colori
-  var legVals = sh.getRange('G2:G6').getValues();
-  var legBgs  = sh.getRange('G2:G6').getBackgrounds();
+  // legenda G2:G?: etichette e colori (dinamico fino all'ultima riga del foglio)
+  var lastRow = Math.max(sh.getLastRow(), 2);
+  var legRange = sh.getRange(2, 7, lastRow - 1, 1); // colonna G, da riga 2
+  var legVals = legRange.getValues();
+  var legBgs  = legRange.getBackgrounds();
   var legend = {};
   var labelColors = {};
   for (var i = 0; i < legVals.length; i++) {
