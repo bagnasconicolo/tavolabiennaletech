@@ -144,27 +144,27 @@ def build_elements_from_csv(path: Path, symbol_col: str, name_col: str) -> List[
 def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) -> str:
     today = date.today().strftime("%Y-%m-%d")
     header = r"""
-\\documentclass[10pt,a4paper]{article}
-\\usepackage[T1]{fontenc}
-\\usepackage[utf8]{inputenc}
-\\usepackage[margin=1.2cm]{geometry}
-\\usepackage{multicol}
-\\usepackage{tabularx}
-\\usepackage{array}
-\\usepackage{fancyhdr}
-\\usepackage{titlesec}
-\\usepackage{enumitem}
-\\setlist{leftmargin=*,nosep}
-\\setlength{\\columnsep}{0.8cm}
-\\setlength{\\parindent}{0pt}
-\\setlength{\\parskip}{3pt}
-\\renewcommand{\\arraystretch}{1.1}
-\\pagestyle{fancy}
-\\fancyhf{}
-\\lhead{%(title)s}
-\\rhead{%(date)s}
-\\cfoot{\\thepage}
-\\titleformat{\\section}{\\large\\bfseries}{}{0pt}{}
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.2cm]{geometry}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\setlist{leftmargin=*,nosep}
+\setlength{\columnsep}{0.8cm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\renewcommand{\arraystretch}{1.1}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{%(title)s}
+\rhead{%(date)s}
+\cfoot{\thepage}
+\titleformat{\section}{\large\bfseries}{}{0pt}{}
 """ % {
         "title": latex_escape(title),
         "date": latex_escape(today),
@@ -172,34 +172,34 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
 
     body_lines: List[str] = [
         header,
-        r"\\begin{document}",
-        r"\\begin{center}",
-        rf"{{\\LARGE\\textbf{{{latex_escape(title)}}}}}\\\\",
-        rf"{{\\normalsize {latex_escape(subtitle)}}}\\\\",
-        r"\\end{center}",
-        r"\\vspace{0.4em}",
-        r"\\begin{multicols}{2}",
+        r"\begin{document}",
+        r"\begin{center}",
+        rf"{{\LARGE\textbf{{{latex_escape(title)}}}}}\\",
+        rf"{{\normalsize {latex_escape(subtitle)}}}\\",
+        r"\end{center}",
+        r"\vspace{0.4em}",
+        r"\begin{multicols}{2}",
     ]
 
     for element in elements:
         label = f"{element.z} {element.symbol} — {element.name}"
-        body_lines.append(r"\\begin{samepage}")
-        body_lines.append(rf"\\textbf{{{latex_escape(label)}}}\\")
-        body_lines.append(r"\\begin{tabularx}{\\linewidth}{@{}lX@{}}")
+        body_lines.append(r"\begin{samepage}")
+        body_lines.append(rf"\textbf{{{latex_escape(label)}}}\\")
+        body_lines.append(r"\begin{tabularx}{\linewidth}{@{}lX@{}}")
         for sample in element.samples:
             state = sample.state or "-"
             value = sample.value or "-"
             details = f"Stato: {state} | Dettagli: {value}"
             body_lines.append(
-                rf"{latex_escape(sample.label)} & {latex_escape(details)} \\\\"
+                rf"{latex_escape(sample.label)} & {latex_escape(details)} \\"
             )
-        body_lines.append(r"\\end{tabularx}")
-        body_lines.append(r"\\vspace{0.2em}")
-        body_lines.append(r"\\end{samepage}")
+        body_lines.append(r"\end{tabularx}")
+        body_lines.append(r"\vspace{0.2em}")
+        body_lines.append(r"\end{samepage}")
 
     body_lines.extend([
-        r"\\end{multicols}",
-        r"\\end{document}",
+        r"\end{multicols}",
+        r"\end{document}",
     ])
 
     return "\n".join(body_lines)
