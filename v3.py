@@ -84,6 +84,7 @@ from __future__ import annotations
 import argparse
 import html as htmllib
 import json
+import os
 import sys
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
@@ -431,6 +432,7 @@ def render_html(
     elements: List[SheetElement],
     data: Dict[str, Any],
     title: str = "Periodic Table with Samples",
+    mobile_href: str = "mobile.html",
 ) -> str:
     """Render the periodic table as an HTML string.
 
@@ -674,6 +676,13 @@ h1{
   justify-content: center;
   text-align: center;
 }
+.meta-actions{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 :root[data-theme="dark"] .meta{
   color: rgba(229,231,235,0.85);
 }
@@ -687,7 +696,7 @@ h1{
   gap: 12px;
   margin-top: 16px;
 }
-.theme-toggle{
+.action-btn{
   border: 1px solid var(--border-colour);
   background: var(--paper);
   color: var(--ink);
@@ -696,10 +705,17 @@ h1{
   font-size: 12px;
   cursor: pointer;
   transition: transform 140ms ease, box-shadow 140ms ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.theme-toggle:hover{
+.action-btn:hover{
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(15,23,42,0.15);
+}
+.action-btn.secondary{
+  background: rgba(14,165,164,0.08);
 }
 .table-wrap{
   margin: 16px auto 0;
@@ -1220,7 +1236,10 @@ document.addEventListener('DOMContentLoaded', function() {{
         f"      <h1>{esc(title)}</h1>",
         "      <div class=\"meta\">",
         "        <span id=\"deploy-meta\">Ultimo commit: in caricamento…</span>",
-        "        <button id=\"theme-toggle\" class=\"theme-toggle\" type=\"button\">Dark mode</button>",
+        "        <div class=\"meta-actions\">",
+        "          <button id=\"theme-toggle\" class=\"action-btn\" type=\"button\">Dark mode</button>",
+        f"          <a class=\"action-btn secondary\" href=\"{esc(mobile_href)}\">Vista mobile</a>",
+        "        </div>",
         "      </div>",
         "    </section>",
         "",
@@ -1239,6 +1258,572 @@ document.addEventListener('DOMContentLoaded', function() {{
         # overlay and popup containers for click details
         "  <div id=\"overlay\" class=\"overlay\"></div>",
         "  <div id=\"popup\" class=\"popup\"></div>",
+        script,
+        "</body>",
+        "</html>",
+    ]
+    return "\n".join(html_parts)
+
+
+def render_mobile_html(
+    elements: List[SheetElement],
+    data: Dict[str, Any],
+    title: str = "Periodic Table – Mobile",
+    desktop_href: str = "index.html",
+) -> str:
+    """Render a mobile-friendly HTML page with a list view of elements."""
+    label_colors: Dict[str, str] = data.get("labelColors", {})
+
+    legend_order: List[Tuple[str, str]] = []
+    if "legend" in data:
+        for color, label in data["legend"].items():
+            legend_order.append((label, color))
+    else:
+        for label, color in label_colors.items():
+            legend_order.append((label, color))
+
+    def esc(s: str) -> str:
+        return htmllib.escape(s, quote=True)
+
+    def sanitize_label(label: str) -> str:
+        s = label.lower()
+        out = []
+        for ch in s:
+            if ch.isalnum():
+                out.append(ch)
+            else:
+                out.append('-')
+        return "".join(out).strip('-')
+
+    def norm_hex(col: str) -> str:
+        return (col or "").strip().lower().lstrip('#')
+
+    chips_html: List[str] = []
+    chips_html.append(
+        '<button class="filter-chip active" data-state="">'
+        '<span class="chip-dot" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>'
+        'tutti<span class="chip-count" data-count-for="all">0</span></button>'
+    )
+    for label, color in legend_order:
+        if not label:
+            continue
+        state_id = sanitize_label(label)
+        color_hex = color if color.startswith('#') else color
+        chips_html.append(
+            f'<button class="filter-chip" data-state="{esc(state_id)}">'
+            f'<span class="chip-dot" style="background:{esc(color_hex)}"></span>'
+            f'{esc(label)}<span class="chip-count" data-count-for="{esc(state_id)}">0</span></button>'
+        )
+    chips_html.append(
+        '<button class="filter-chip" data-state="completi">'
+        '<span class="chip-dot" style="background:#93c47d"></span>'
+        'completi<span class="chip-count" data-count-for="completi">0</span></button>'
+    )
+
+    cards_html: List[str] = []
+    for e in elements:
+        states = []
+        for s in e.samples:
+            if s.state:
+                states.append(sanitize_label(s.state))
+        unique_states = sorted(set([s for s in states if s]))
+        states_attr = " ".join(unique_states)
+        is_complete = norm_hex(getattr(e, "symbolColor", "")) == "b8fb89"
+        complete_class = " complete" if is_complete else ""
+        symbol_style = ' style="background:#b8fb89"' if is_complete else ""
+
+        samples_html: List[str] = []
+        for idx, s in enumerate(e.samples):
+            st = s.state if s.state else "non definito"
+            val = s.value if s.value else "—"
+            color = s.color if s.color else "#e5e7eb"
+            samples_html.append(
+                f'<div class="sample">'
+                f'<span class="sample-dot" style="background:{esc(color)}"></span>'
+                f'<div class="sample-main">Campione {idx+1}</div>'
+                f'<div class="sample-meta">{esc(st)} · {esc(val)}</div>'
+                f'</div>'
+            )
+        cards_html.append(
+            f'<article class="element-card{complete_class}" '
+            f'data-states="{esc(states_attr)}" '
+            f'data-search="{esc(f"{e.symbol} {e.name} {e.z}")}" '
+            f'data-symbol="{esc(e.symbol)}" data-name="{esc(e.name)}" data-z="{e.z}">'
+            f'<div class="card-top">'
+            f'<div class="symbol-badge"{symbol_style}>{esc(e.symbol)}</div>'
+            f'<div class="card-title">'
+            f'<div class="element-name">{esc(e.name)}</div>'
+            f'<div class="element-meta">Z={e.z}</div>'
+            f'</div>'
+            f'<div class="card-tag">{ "Completo" if is_complete else "In corso" }</div>'
+            f'</div>'
+            f'<div class="samples-list">{"".join(samples_html)}</div>'
+            f'</article>'
+        )
+
+    css = """
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
+:root{
+  --border-colour: rgba(17, 23, 32, 0.12);
+  --empty-bg: #f6f7f9;
+  --ink: #0f172a;
+  --paper: #ffffff;
+  --accent: #0ea5a4;
+  --accent-2: #f59e0b;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+:root[data-theme="dark"]{
+  --border-colour: rgba(255,255,255,0.15);
+  --empty-bg: #0f1115;
+  --ink: #e5e7eb;
+  --paper: #12151b;
+  --accent: #22d3ee;
+  --accent-2: #fbbf24;
+  --shadow: 0 12px 28px rgba(0,0,0,0.4);
+}
+:root[data-theme="light"]{
+  --border-colour: rgba(17, 23, 32, 0.12);
+  --empty-bg: #f6f7f9;
+  --ink: #0f172a;
+  --paper: #ffffff;
+  --accent: #0ea5a4;
+  --accent-2: #f59e0b;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]){
+    --border-colour: rgba(255,255,255,0.15);
+    --empty-bg: #0f1115;
+    --ink: #e5e7eb;
+    --paper: #12151b;
+    --accent: #22d3ee;
+    --accent-2: #fbbf24;
+    --shadow: 0 12px 28px rgba(0,0,0,0.4);
+  }
+}
+body{
+  margin: 0;
+  font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1000px 700px at 85% -10%, rgba(14,165,164,0.14), transparent 60%),
+    radial-gradient(800px 600px at 12% 0%, rgba(245,158,11,0.14), transparent 60%),
+    var(--empty-bg);
+  color: var(--ink);
+}
+.page{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px 16px 32px;
+}
+.hero{
+  display: grid;
+  gap: 10px;
+  padding: 18px 18px;
+  background: var(--paper);
+  border: 1px solid var(--border-colour);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+h1{
+  margin: 0;
+  font-size: clamp(20px, 4vw, 30px);
+  letter-spacing: 0.2px;
+}
+.meta{
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(15,23,42,0.55);
+}
+:root[data-theme="dark"] .meta{
+  color: rgba(229,231,235,0.8);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .meta{
+    color: rgba(229,231,235,0.8);
+  }
+}
+.meta-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.action-btn{
+  border: 1px solid var(--border-colour);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.action-btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15,23,42,0.15);
+}
+.action-btn.secondary{
+  background: rgba(14,165,164,0.08);
+}
+.search-panel{
+  margin-top: 16px;
+  background: var(--paper);
+  border: 1px solid var(--border-colour);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+}
+.search-input{
+  width: 100%;
+  border: 1px solid var(--border-colour);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: var(--empty-bg);
+  color: var(--ink);
+}
+.filters{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.filter-chip{
+  border: 1px solid var(--border-colour);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.filter-chip.active{
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.chip-dot{
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border-colour);
+}
+.chip-count{
+  margin-left: 2px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.08);
+  font-size: 11px;
+}
+:root[data-theme="dark"] .chip-count{
+  background: rgba(255,255,255,0.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .chip-count{
+    background: rgba(255,255,255,0.12);
+  }
+}
+.results{
+  font-size: 12px;
+  color: rgba(15,23,42,0.55);
+}
+:root[data-theme="dark"] .results{
+  color: rgba(229,231,235,0.7);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .results{
+    color: rgba(229,231,235,0.7);
+  }
+}
+.card-grid{
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.element-card{
+  background: var(--paper);
+  border: 1px solid var(--border-colour);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 10px;
+}
+.element-card.hidden{
+  display: none;
+}
+.card-top{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+.symbol-badge{
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border-colour);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  background: #ffffff;
+  color: #000000;
+}
+.element-card.complete .symbol-badge{
+  background: #b8fb89;
+}
+.card-title{
+  display: grid;
+  gap: 2px;
+}
+.element-name{
+  font-weight: 600;
+  font-size: 15px;
+}
+.element-meta{
+  font-size: 12px;
+  color: rgba(15,23,42,0.55);
+}
+.card-tag{
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(14,165,164,0.12);
+  color: var(--ink);
+}
+.element-card.complete .card-tag{
+  background: rgba(147,196,125,0.25);
+}
+.samples-list{
+  display: grid;
+  gap: 8px;
+}
+.sample{
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 4px 8px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(15,23,42,0.04);
+}
+@media (prefers-color-scheme: dark){
+  .sample{
+    background: rgba(255,255,255,0.06);
+  }
+}
+.sample-dot{
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.15);
+  grid-row: 1 / span 2;
+}
+.sample-main{
+  font-size: 12px;
+  font-weight: 600;
+}
+.sample-meta{
+  font-size: 12px;
+  color: rgba(15,23,42,0.68);
+}
+:root[data-theme="dark"] .sample-meta{
+  color: rgba(229,231,235,0.7);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .sample-meta{
+    color: rgba(229,231,235,0.7);
+  }
+}
+"""
+
+    script = """
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = Array.from(document.querySelectorAll('.element-card'));
+  const chips = Array.from(document.querySelectorAll('.filter-chip'));
+  const counts = Array.from(document.querySelectorAll('.chip-count'));
+  const searchInput = document.getElementById('search-input');
+  const resultsEl = document.getElementById('results-count');
+  const deployMetaEl = document.getElementById('deploy-meta');
+  const themeToggle = document.getElementById('theme-toggle');
+
+  function setActiveChip(target) {
+    chips.forEach(chip => chip.classList.toggle('active', chip === target));
+  }
+
+  function getActiveState() {
+    const active = chips.find(chip => chip.classList.contains('active'));
+    return active ? (active.getAttribute('data-state') || '') : '';
+  }
+
+  function updateCounts() {
+    const map = {};
+    counts.forEach(el => {
+      const key = el.getAttribute('data-count-for');
+      if (key) map[key] = 0;
+    });
+    cards.forEach(card => {
+      const stateList = (card.getAttribute('data-states') || '').split(' ').filter(Boolean);
+      stateList.forEach(st => {
+        if (map[st] !== undefined) map[st] += 1;
+      });
+      if (card.classList.contains('complete') && map.completi !== undefined) {
+        map.completi += 1;
+      }
+    });
+    const total = cards.length;
+    counts.forEach(el => {
+      const key = el.getAttribute('data-count-for');
+      if (key === 'all') {
+        el.textContent = total;
+      } else if (map[key] !== undefined) {
+        el.textContent = map[key];
+      }
+    });
+  }
+
+  function applyFilters() {
+    const state = getActiveState();
+    const term = (searchInput && searchInput.value ? searchInput.value.trim().toLowerCase() : '');
+    let visibleCount = 0;
+    cards.forEach(card => {
+      let visible = true;
+      if (state === 'completi') {
+        visible = card.classList.contains('complete');
+      } else if (state) {
+        const stateList = (card.getAttribute('data-states') || '').split(' ').filter(Boolean);
+        visible = stateList.includes(state);
+      }
+      if (term) {
+        const hay = (card.getAttribute('data-search') || '').toLowerCase();
+        if (!hay.includes(term)) visible = false;
+      }
+      card.classList.toggle('hidden', !visible);
+      if (visible) visibleCount += 1;
+    });
+    if (resultsEl) {
+      resultsEl.textContent = `${visibleCount} / ${cards.length}`;
+    }
+  }
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      setActiveChip(chip);
+      applyFilters();
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  function applyTheme(mode) {
+    const root = document.documentElement;
+    if (!root) return;
+    if (mode === 'dark' || mode === 'light') {
+      root.setAttribute('data-theme', mode);
+    } else {
+      root.removeAttribute('data-theme');
+    }
+    if (themeToggle) {
+      themeToggle.textContent = mode === 'dark' ? 'Light mode' : 'Dark mode';
+    }
+  }
+
+  function initTheme() {
+    if (!themeToggle) return;
+    const stored = localStorage.getItem('theme');
+    let mode = stored;
+    if (!mode) {
+      mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    applyTheme(mode);
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      applyTheme(next);
+    });
+  }
+
+  async function loadLatestCommit() {
+    if (!deployMetaEl) return;
+    const owner = 'bagnasconicolo';
+    const repo = 'tavolabiennaletech';
+    try {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`, {
+        headers: { 'Accept': 'application/vnd.github+json' }
+      });
+      if (!res.ok) throw new Error('GitHub API error');
+      const commits = await res.json();
+      const latest = Array.isArray(commits) ? commits[0] : null;
+      const committedAt = latest?.commit?.committer?.date || latest?.commit?.author?.date;
+      if (!committedAt) throw new Error('No commit data');
+      const dt = new Date(committedAt);
+      const formatted = dt.toLocaleString('it-IT', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      deployMetaEl.textContent = `Ultimo commit: ${formatted}`;
+    } catch (err) {
+      deployMetaEl.textContent = 'Ultimo commit: non disponibile';
+    }
+  }
+
+  updateCounts();
+  applyFilters();
+  initTheme();
+  loadLatestCommit();
+});
+</script>
+"""
+
+    html_parts = [
+        "<!doctype html>",
+        '<html lang="en">',
+        "<head>",
+        "  <meta charset=\"utf-8\">",
+        "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+        f"  <title>{esc(title)}</title>",
+        "  <style>" + css + "</style>",
+        "</head>",
+        "<body>",
+        "  <div class=\"page\">",
+        "    <section class=\"hero\">",
+        f"      <h1>{esc(title)}</h1>",
+        "      <div class=\"meta\">",
+        "        <span id=\"deploy-meta\">Ultimo commit: in caricamento…</span>",
+        "        <div class=\"meta-actions\">",
+        "          <button id=\"theme-toggle\" class=\"action-btn\" type=\"button\">Dark mode</button>",
+        f"          <a class=\"action-btn secondary\" href=\"{esc(desktop_href)}\">Vista tabella</a>",
+        "        </div>",
+        "      </div>",
+        "    </section>",
+        "    <section class=\"search-panel\">",
+        "      <input id=\"search-input\" class=\"search-input\" type=\"search\" placeholder=\"Cerca per simbolo, nome o numero…\" aria-label=\"Cerca elementi\">",
+        "      <div class=\"filters\">",
+        "        " + "".join(chips_html),
+        "      </div>",
+        "      <div class=\"results\">Elementi visibili: <span id=\"results-count\">0</span></div>",
+        "    </section>",
+        "    <section class=\"card-grid\">",
+        "      " + "".join(cards_html),
+        "    </section>",
+        "  </div>",
         script,
         "</body>",
         "</html>",
@@ -1272,6 +1857,12 @@ def main() -> int:
         help="Path to write the output HTML file",
     )
     parser.add_argument(
+        "--mobile-output",
+        dest="mobile_output",
+        default=None,
+        help="Optional path for the mobile HTML output (default: mobile.html next to --output)",
+    )
+    parser.add_argument(
         "--dump-json",
         dest="dump_json",
         default=None,
@@ -1293,17 +1884,34 @@ def main() -> int:
     # Build element objects
     elements = assemble_elements(data, label_colors)
 
-    # Render HTML
-    html_out = render_html(elements, data, title=args.title)
+    # Render HTML (desktop + mobile)
+    mobile_out = args.mobile_output
+    if not mobile_out:
+        if args.output.lower().endswith(".html"):
+            base_dir = os.path.dirname(os.path.abspath(args.output))
+            mobile_out = os.path.join(base_dir, "mobile.html")
+        else:
+            mobile_out = "mobile.html"
+    desktop_dir = os.path.dirname(os.path.abspath(args.output))
+    mobile_dir = os.path.dirname(os.path.abspath(mobile_out))
+    mobile_href = os.path.relpath(mobile_out, start=desktop_dir).replace(os.sep, "/")
+    desktop_href = os.path.relpath(args.output, start=mobile_dir).replace(os.sep, "/")
+
+    html_out = render_html(elements, data, title=args.title, mobile_href=mobile_href)
+    mobile_title = f"{args.title} – Mobile"
+    html_mobile = render_mobile_html(elements, data, title=mobile_title, desktop_href=desktop_href)
 
     # Write file
     try:
         with open(args.output, "w", encoding="utf-8") as f:
             f.write(html_out)
+        with open(mobile_out, "w", encoding="utf-8") as f:
+            f.write(html_mobile)
     except Exception as exc:
         raise RuntimeError(f"Failed to write output file {args.output}: {exc}") from exc
 
     print(f"Generated {args.output} successfully.")
+    print(f"Generated {mobile_out} successfully.")
     return 0
 
 
