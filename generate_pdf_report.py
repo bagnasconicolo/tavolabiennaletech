@@ -151,7 +151,7 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
 \documentclass[10pt,a4paper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[margin=1.2cm]{geometry}
+\usepackage[a4paper,margin=1.4cm,includehead]{geometry}
 \usepackage{multicol}
 \usepackage{tabularx}
 \usepackage{array}
@@ -159,11 +159,14 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{xcolor}
+\usepackage{needspace}
 \setlist{leftmargin=*,nosep}
 \setlength{\columnsep}{0.8cm}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{3pt}
 \renewcommand{\arraystretch}{1.1}
+\setlength{\headheight}{14pt}
+\setlength{\headsep}{8pt}
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{%(title)s}
@@ -199,7 +202,8 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
             if sample.value or sample.state:
                 filled_count += 1
         label = f"{element.z} {element.symbol} — {element.name}"
-        body_lines.append(r"\begin{samepage}")
+        body_lines.append(r"\Needspace{7\baselineskip}")
+        body_lines.append(r"\begin{minipage}[t]{\linewidth}")
         body_lines.append(
             rf"\textbf{{{latex_escape(label)}}}\samplebadge{{{filled_count}/4}}\\"
         )
@@ -221,7 +225,7 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
             body_lines.append(rf"{bullet} {latex_escape(details)} \\")
         body_lines.append(r"\end{tabularx}")
         body_lines.append(r"\vspace{0.2em}")
-        body_lines.append(r"\end{samepage}")
+        body_lines.append(r"\end{minipage}")
 
     body_lines.extend([
         r"\end{multicols}",
