@@ -11,7 +11,7 @@ row has the following structure:
   * Column A: The element symbol (e.g. "H", "He", "Li", ...).
   * Columns B–E: Four sample fields.  These cells may contain arbitrary
     values (for example, identifiers or comments) and are coloured
-    according to a legend defined in cells G2:G6.  The legend cells
+    according to a legend defined in cells G2:G?.  The legend cells
     contain the textual state (e.g. "da comprare", "in arrivo", …) and
     their background colours define the colour for that state.
 

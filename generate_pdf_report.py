@@ -185,14 +185,12 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
         label = f"{element.z} {element.symbol} — {element.name}"
         body_lines.append(r"\begin{samepage}")
         body_lines.append(rf"\textbf{{{latex_escape(label)}}}\\")
-        body_lines.append(r"\begin{tabularx}{\linewidth}{@{}lX@{}}")
+        body_lines.append(r"\begin{tabularx}{\linewidth}{@{}X@{}}")
         for sample in element.samples:
             state = sample.state or "-"
             value = sample.value or "-"
-            details = f"Stato: {state} | Dettagli: {value}"
-            body_lines.append(
-                rf"{latex_escape(sample.label)} & {latex_escape(details)} \\"
-            )
+            details = f"{value} - {state}"
+            body_lines.append(rf"{latex_escape(details)} \\")
         body_lines.append(r"\end{tabularx}")
         body_lines.append(r"\vspace{0.2em}")
         body_lines.append(r"\end{samepage}")
