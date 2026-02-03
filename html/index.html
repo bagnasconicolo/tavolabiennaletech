@@ -5,31 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tracker progressi - Piccolo Museo della Tavola Periodica @ Biennale Tech 2026 – campioni</title>
   <style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
 :root{
-  --cell-size: clamp(60px, 5.5vw, 90px);
-  --gap: 4px;
-  --border-radius: 6px;
-  --border-colour: rgba(0,0,0,0.2);
-  --empty-bg: #f5f5f5;
-  --empty-bg-dark: #222;
+  --cell-size: clamp(58px, 5.2vw, 92px);
+  --gap: 6px;
+  --border-radius: 10px;
+  --border-colour: rgba(17, 23, 32, 0.12);
+  --empty-bg: #f6f7f9;
+  --ink: #0f172a;
+  --paper: #ffffff;
+  --accent: #0ea5a4;
+  --accent-2: #f59e0b;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --border-colour: rgba(255,255,255,0.25);
-    --empty-bg: #20252a;
-    --empty-bg-dark: #111;
+    --border-colour: rgba(255,255,255,0.15);
+    --empty-bg: #0f1115;
+    --ink: #e5e7eb;
+    --paper: #12151b;
+    --accent: #22d3ee;
+    --accent-2: #fbbf24;
+    --shadow: 0 12px 28px rgba(0,0,0,0.4);
   }
 }
 body{
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--empty-bg-dark);
-  color: #eee;
+  font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1200px 800px at 80% -10%, rgba(14,165,164,0.15), transparent 60%),
+    radial-gradient(900px 700px at 10% 0%, rgba(245,158,11,0.12), transparent 60%),
+    var(--empty-bg);
+  color: var(--ink);
+}
+.page{
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 18px 28px;
+}
+.hero{
+  display: grid;
+  gap: 8px;
+  align-items: start;
+  padding: 18px 20px;
+  background: var(--paper);
+  border: 1px solid var(--border-colour);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
 }
 h1{
-  margin: 16px;
-  font-size: 20px;
-  text-align: center;
+  margin: 0;
+  font-family: "Spectral", "Times New Roman", serif;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: 0.3px;
+}
+.subtitle{
+  margin: 0;
+  font-size: clamp(14px, 1.6vw, 18px);
+  color: rgba(15,23,42,0.65);
+}
+@media (prefers-color-scheme: dark){
+  .subtitle{
+    color: rgba(229,231,235,0.7);
+  }
+}
+.meta{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(15,23,42,0.55);
+}
+@media (prefers-color-scheme: dark){
+  .meta{
+    color: rgba(229,231,235,0.6);
+  }
+}
+.toolbar{
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+.stats{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.stat{
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-colour);
+  background: var(--paper);
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat .dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.table-wrap{
+  margin-top: 16px;
+  padding: 16px 12px 8px;
+  background: var(--paper);
+  border: 1px solid var(--border-colour);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
 }
 .table{
   display: grid;
@@ -37,7 +123,7 @@ h1{
   grid-auto-rows: var(--cell-size);
   gap: var(--gap);
   justify-content: center;
-  padding: 16px;
+  min-width: calc(18 * var(--cell-size) + 17 * var(--gap));
 }
 .cell{
   position: relative;
@@ -46,15 +132,18 @@ h1{
   border: 1px solid var(--border-colour);
   border-radius: var(--border-radius);
   background: var(--empty-bg);
+  box-shadow: 0 4px 12px rgba(15,23,42,0.08);
 }
 .cell.empty{
   background: transparent;
   border: none;
+  box-shadow: none;
 }
 .cell.spacer{
   height: calc(var(--cell-size) / 2);
   background: transparent;
   border: none;
+  box-shadow: none;
 }
 .cell.element{
   /* sempre sfondo chiaro e testo nero per leggibilità */
@@ -62,6 +151,11 @@ h1{
   color: #000000;
   overflow: hidden;
   cursor: default;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.cell.element:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(15,23,42,0.18);
 }
 /* nessuna variazione in dark mode: il testo resta nero */
 .symbol{
@@ -96,6 +190,7 @@ h1{
   justify-content: center;
   font-size: 11px;
   color: #000000;
+  transition: opacity 120ms ease;
 }
 .samples .quarter .sidx{
   position: absolute;
@@ -116,25 +211,29 @@ h1{
   cursor: pointer;
 }
 .legend-item.active{
-  box-shadow: 0 0 0 2px rgba(0,120,212,0.8);
+  box-shadow: 0 0 0 2px var(--accent);
 }
 .legend{
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  padding: 8px 16px 24px 16px;
+  padding: 8px 0 6px 0;
   font-size: 13px;
 }
 .legend-item{
   display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--empty-bg);
+  background: var(--paper);
   border: 1px solid var(--border-colour);
   border-radius: var(--border-radius);
   padding: 2px 6px;
-  color: #000000; /* testi neri sui bottoni della legenda */
+  color: var(--ink);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+.legend-item:hover{
+  transform: translateY(-1px);
 }
 .legend-colour{
   width: 14px;
@@ -162,12 +261,12 @@ h1{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #ffffff;
-    color: #000000;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    max-width: 320px;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    max-width: 360px;
     min-width: 260px;
     display: none;
     z-index: 1000;
@@ -175,11 +274,72 @@ h1{
   .popup.visible{
     display: block;
   }
+  .popup h2{
+    margin: 0 0 8px 0;
+    font-size: 18px;
+  }
+  .popup ul{
+    margin: 8px 0 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .popup li{
+    display: grid;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(15,23,42,0.04);
+  }
+  @media (prefers-color-scheme: dark){
+    .popup li{
+      background: rgba(255,255,255,0.05);
+    }
+  }
+  .popup .close{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: rgba(15,23,42,0.06);
+    color: var(--ink);
+    font-size: 14px;
+    border-radius: 999px;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+  .popup .close:hover{
+    background: rgba(15,23,42,0.12);
+  }
 </style>
 </head>
 <body>
-  <h1>Tracker progressi - Piccolo Museo della Tavola Periodica @ Biennale Tech 2026 – campioni</h1>
-  <div class="table">
+  <div class="page">
+    <section class="hero">
+      <h1>Tracker progressi – Piccolo Museo della Tavola Periodica</h1>
+      <p class="subtitle">Biennale Tech 2026 · stato dei campioni e materiali</p>
+      <div class="meta">
+        <span>Ultimo aggiornamento: Febbraio 2026</span>
+        <span>Legenda interattiva e dettagli per elemento</span>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="legend">
+        <div class="legend-item active" data-state=""><span class="legend-colour" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>tutti</div>
+        <div class="legend-item" data-state="da-cercare"><span class="legend-colour" style="background:#434343"></span>da cercare</div>
+        <div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare</div>
+        <div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo</div>
+        <div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto</div>
+        <div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato</div>
+      </div>
+      <div id="stats" class="stats"></div>
+    </section>
+
+    <div class="table-wrap">
+      <div class="table">
     <div class="cell element" data-tip="Hydrogen
 Z=1
 1: in arrivo; fiala a bassa pressione
@@ -542,9 +702,8 @@ Z=101
 Z=102
 1: inventariato; Medaglia Nobel" data-z="102"><div class="number">102</div><div class="symbol">No</div><div class="samples"><div class="quarter state-inventariato" style="background:#a4c2f4" data-state="inventariato" data-tip="inventariato | Medaglia Nobel"><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Lawrencium
 Z=103" data-z="103"><div class="number">103</div><div class="symbol">Lr</div><div class="samples"><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">1</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div>
-  </div>
-  <div class="legend">
-    <div class="legend-item" data-state="da-cercare"><span class="legend-colour" style="background:#434343"></span>da cercare</div><div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare</div><div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo</div><div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto</div><div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato</div>
+      </div>
+    </div>
   </div>
   <div id="overlay" class="overlay"></div>
   <div id="popup" class="popup"></div>
@@ -671,50 +830,106 @@ const elementsData = {
     118: {"z": 118, "symbol": "Og", "name": "Oganesson", "samples": [{"state": "", "value": "Francobolli Oganesson"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]}
   };
 document.addEventListener('DOMContentLoaded', function() {
-  const legendItems = document.querySelectorAll('.legend-item');
+  const legendItems = Array.from(document.querySelectorAll('.legend-item'));
+  const quarters = Array.from(document.querySelectorAll('.quarter'));
+  const statsEl = document.getElementById('stats');
+  const overlay = document.getElementById('overlay');
+  const popup = document.getElementById('popup');
+
+  function setActiveLegend(target) {
+    legendItems.forEach(li => li.classList.toggle('active', li === target));
+  }
+
+  function applyFilter(state) {
+    quarters.forEach(q => {
+      const qState = q.getAttribute('data-state');
+      if (!state) {
+        q.classList.remove('filtered');
+      } else if (qState !== state) {
+        q.classList.add('filtered');
+      } else {
+        q.classList.remove('filtered');
+      }
+    });
+  }
+
   legendItems.forEach(item => {
     item.addEventListener('click', function() {
       const state = this.getAttribute('data-state');
-      legendItems.forEach(li => li.classList.toggle('active', li === this));
-      document.querySelectorAll('.quarter').forEach(q => {
-        const qState = q.getAttribute('data-state');
-        if (!state || state === '') {
-          q.classList.remove('filtered');
-        } else if (qState !== state) {
-          q.classList.add('filtered');
-        } else {
-          q.classList.remove('filtered');
+      const isActive = this.classList.contains('active');
+      if (isActive && state) {
+        const allItem = legendItems.find(li => li.getAttribute('data-state') === '');
+        if (allItem) {
+          setActiveLegend(allItem);
         }
-      });
+        applyFilter('');
+        return;
+      }
+      setActiveLegend(this);
+      applyFilter(state);
     });
   });
-  // Popup handling
-  const overlay = document.getElementById('overlay');
-  const popup = document.getElementById('popup');
-  // Close popup when clicking outside
-  overlay.addEventListener('click', function() {
+
+  function buildStats() {
+    const counts = {
+      'da-cercare': 0,
+      'da-comprare': 0,
+      'in-arrivo': 0,
+      'ottenuto': 0,
+      'inventariato': 0
+    };
+    quarters.forEach(q => {
+      const st = q.getAttribute('data-state');
+      if (counts[st] !== undefined) {
+        counts[st] += 1;
+      }
+    });
+    const statHtml = [
+      { key: 'da-cercare', label: 'da cercare', color: '#434343' },
+      { key: 'da-comprare', label: 'da comprare', color: '#e06666' },
+      { key: 'in-arrivo', label: 'in arrivo', color: '#ffd966' },
+      { key: 'ottenuto', label: 'ottenuto', color: '#93c47d' },
+      { key: 'inventariato', label: 'inventariato', color: '#a4c2f4' }
+    ].map(item => (
+      `<span class="stat"><span class="dot" style="background:${item.color}"></span>${item.label}: ${counts[item.key]}</span>`
+    )).join('');
+    statsEl.innerHTML = statHtml;
+  }
+
+  function closePopup() {
     overlay.classList.remove('visible');
     popup.classList.remove('visible');
+  }
+
+  overlay.addEventListener('click', closePopup);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closePopup();
+    }
   });
-  // Attach click handlers on element cells
+
   document.querySelectorAll('.cell.element').forEach(el => {
     el.addEventListener('click', function(e) {
       e.stopPropagation();
       const z = this.getAttribute('data-z');
       const info = elementsData[z];
       if (!info) return;
-      let html = `<h2>${info.symbol} – ${info.name} (Z=${info.z})</h2><ul>`;
+      let html = `<button class="close" aria-label="Chiudi">Chiudi</button>`;
+      html += `<h2>${info.symbol} – ${info.name} (Z=${info.z})</h2><ul>`;
       info.samples.forEach((s, i) => {
-        const st = s.state ? s.state : '-';
-        const val = s.value ? s.value : '';
-        html += `<li><strong>Campione ${i+1}:</strong> ${st} – ${val}</li>`;
+        const st = s.state ? s.state : 'non definito';
+        const val = s.value ? s.value : '—';
+        html += `<li><strong>Campione ${i+1}:</strong> ${st} · ${val}</li>`;
       });
       html += '</ul>';
       popup.innerHTML = html;
+      popup.querySelector('.close').addEventListener('click', closePopup);
       overlay.classList.add('visible');
       popup.classList.add('visible');
     });
   });
+
+  buildStats();
 });
 </script>
 
