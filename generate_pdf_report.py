@@ -149,6 +149,27 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
     today = date.today().strftime("%Y-%m-%d")
     if "{date}" in title:
         title = title.replace("{date}", today)
+    elements = list(elements)
+    # Build stats by state (order of appearance) and totals
+    state_order: List[str] = []
+    state_counts: Dict[str, int] = {}
+    total_samples = 0
+    complete_elements = 0
+    for element in elements:
+        filled_for_element = 0
+        for sample in element.samples:
+            if sample.state:
+                if sample.state not in state_counts:
+                    state_counts[sample.state] = 0
+                    state_order.append(sample.state)
+                state_counts[sample.state] += 1
+                total_samples += 1
+                filled_for_element += 1
+            elif sample.value:
+                # count non-empty sample as filled even without state
+                filled_for_element += 1
+        if filled_for_element == 4:
+            complete_elements += 1
     header = r"""
 \documentclass[10pt,a4paper]{article}
 \usepackage[T1]{fontenc}
@@ -171,7 +192,7 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
 \setlength{\headsep}{8pt}
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{%(title)s}
+\lhead{Report - Piccolo Museo della Tavola Periodica}
 \rhead{%(date)s}
 \cfoot{\thepage}
 \titleformat{\section}{\large\bfseries}{}{0pt}{}
@@ -194,6 +215,18 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
         r"\rule{\linewidth}{0.4pt}",
         r"\end{center}",
         r"\vspace{0.4em}",
+    ]
+
+    stats_parts: List[str] = []
+    stats_parts.append(f"Totale campioni: {total_samples}")
+    stats_parts.append(f"Completi: {complete_elements}")
+    for state in state_order:
+        stats_parts.append(f"{state}: {state_counts[state]}")
+    stats_line = " · ".join(latex_escape(part) for part in stats_parts)
+
+    body_lines.extend([
+        rf"\small \textbf{{Statistiche:}} {stats_line} \\",
+        r"\vspace{0.6em}",
         r"\begin{multicols}{2}",
         r"\small",
     ]
