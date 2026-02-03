@@ -19,7 +19,7 @@ echo "================================"
 echo "🚀 Tracker Update Script"
 echo "================================"
 echo ""
-TOTAL_STEPS=12
+TOTAL_STEPS=14
 APPS_SCRIPT_DIR="apps-script"
 APPS_SCRIPT_PROJECT_ID="1_Ph_bUS6lbFpWPIlhDZQUjIT7QZyGVZRG0todZ1o2GYhgj1Y0-OCDbJF"
 APPS_SCRIPT_DEPLOYMENT_ID="AKfycbz2T-xieiHlll6pCUfHaoP9GQHACdcJhDD52Z5pCoSCj1S09vhzRZfL2kNJHJ-l8kL9cA"
@@ -85,16 +85,27 @@ echo ""
 echo "[8/${TOTAL_STEPS}] HTML generated successfully ✅"
 show_progress 8 "$TOTAL_STEPS"
 echo ""
-echo "[9/${TOTAL_STEPS}] Staging changes..."
+echo "[9/${TOTAL_STEPS}] Generating PDF report..."
 show_progress 9 "$TOTAL_STEPS"
-git add .
-echo "[10/${TOTAL_STEPS}] Files staged ✅"
+python generate_pdf_report.py \
+  --api-url "https://script.google.com/macros/s/AKfycbz2T-xieiHlll6pCUfHaoP9GQHACdcJhDD52Z5pCoSCj1S09vhzRZfL2kNJHJ-l8kL9cA/exec" \
+  --output ./output/elementi_report.pdf \
+  --title "Report campioni per elemento" \
+  --subtitle "Piccolo Museo della Tavola Periodica @ Biennale Tech 2026"
+echo ""
+echo "[10/${TOTAL_STEPS}] PDF report generated ✅"
 show_progress 10 "$TOTAL_STEPS"
-echo "[11/${TOTAL_STEPS}] Committing changes..."
+echo ""
+echo "[11/${TOTAL_STEPS}] Staging changes..."
 show_progress 11 "$TOTAL_STEPS"
-git commit -m "Aggiornamento automatico dei dati"
-echo "[12/${TOTAL_STEPS}] Pushing to remote..."
+git add .
+echo "[12/${TOTAL_STEPS}] Files staged ✅"
 show_progress 12 "$TOTAL_STEPS"
+echo "[13/${TOTAL_STEPS}] Committing changes..."
+show_progress 13 "$TOTAL_STEPS"
+git commit -m "Aggiornamento automatico dei dati"
+echo "[14/${TOTAL_STEPS}] Pushing to remote..."
+show_progress 14 "$TOTAL_STEPS"
 git push
 echo "[${TOTAL_STEPS}/${TOTAL_STEPS}] Repository updated ✅"
 show_progress "$TOTAL_STEPS" "$TOTAL_STEPS"
