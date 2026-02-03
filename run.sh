@@ -37,19 +37,10 @@ show_progress 2 "$TOTAL_STEPS"
 echo ""
 echo "[3/${TOTAL_STEPS}] Pulling latest changes..."
 show_progress 3 "$TOTAL_STEPS"
-STASHED=0
 if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "Uncommitted changes detected; stashing before pull..."
-  git stash push -u -m "auto-stash before pull"
-  STASHED=1
-fi
-git pull
-if [[ "$STASHED" -eq 1 ]]; then
-  echo "Restoring stashed changes..."
-  git stash pop || {
-    echo "Stash apply failed; resolve conflicts and rerun."
-    exit 1
-  }
+  echo "Working tree dirty; skipping git pull to avoid stash conflicts."
+else
+  git pull
 fi
 echo "[4/${TOTAL_STEPS}] Repository updated ✅"
 show_progress 4 "$TOTAL_STEPS"
