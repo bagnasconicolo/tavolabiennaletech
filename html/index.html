@@ -7,7 +7,7 @@
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
 :root{
-  --cell-size: clamp(44px, 4.6vw, 92px);
+  --cell-size: clamp(40px, 4.2vw, 86px);
   --gap: 6px;
   --border-radius: 10px;
   --border-colour: rgba(17, 23, 32, 0.12);
@@ -29,6 +29,24 @@
     --shadow: 0 12px 28px rgba(0,0,0,0.4);
   }
 }
+body.dark{
+  --border-colour: rgba(255,255,255,0.15);
+  --empty-bg: #0f1115;
+  --ink: #e5e7eb;
+  --paper: #12151b;
+  --accent: #22d3ee;
+  --accent-2: #fbbf24;
+  --shadow: 0 12px 28px rgba(0,0,0,0.4);
+}
+body.light{
+  --border-colour: rgba(17, 23, 32, 0.12);
+  --empty-bg: #f6f7f9;
+  --ink: #0f172a;
+  --paper: #ffffff;
+  --accent: #0ea5a4;
+  --accent-2: #f59e0b;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
 body{
   margin: 0;
   font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
@@ -37,10 +55,11 @@ body{
     radial-gradient(900px 700px at 10% 0%, rgba(245,158,11,0.12), transparent 60%),
     var(--empty-bg);
   color: var(--ink);
+  overflow-x: hidden;
 }
 .page{
-  max-width: none;
-  margin: 0;
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 20px 18px 28px;
 }
 .hero{
@@ -75,6 +94,7 @@ h1{
   gap: 10px;
   font-size: 12px;
   color: rgba(15,23,42,0.55);
+  align-items: center;
 }
 @media (prefers-color-scheme: dark){
   .meta{
@@ -85,6 +105,20 @@ h1{
   display: grid;
   gap: 12px;
   margin-top: 16px;
+}
+.theme-toggle{
+  border: 1px solid var(--border-colour);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+.theme-toggle:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15,23,42,0.15);
 }
 .stats{
   display: flex;
@@ -113,10 +147,9 @@ h1{
   padding: 12px 10px 10px;
   background: var(--paper);
   border: 1px solid var(--border-colour);
-  border-radius: 0;
+  border-radius: 16px;
   box-shadow: var(--shadow);
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: 100%;
 }
 .table{
   display: grid;
@@ -329,6 +362,7 @@ h1{
       <div class="meta">
         <span id="deploy-meta">Ultimo deployment: in caricamento…</span>
         <span>Legenda interattiva e dettagli per elemento</span>
+        <button id="theme-toggle" class="theme-toggle" type="button">Dark mode</button>
       </div>
     </section>
 
@@ -840,6 +874,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const quarters = Array.from(document.querySelectorAll('.quarter'));
   const statsEl = document.getElementById('stats');
   const deployMetaEl = document.getElementById('deploy-meta');
+  const themeToggle = document.getElementById('theme-toggle');
   const overlay = document.getElementById('overlay');
   const popup = document.getElementById('popup');
 
@@ -992,9 +1027,34 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   buildStats();
+  initTheme();
   loadLatestPagesDeploy();
 });
 </script>
 
 </body>
 </html>
+  function applyTheme(mode) {
+    document.body.classList.remove('dark', 'light');
+    if (mode === 'dark') document.body.classList.add('dark');
+    if (mode === 'light') document.body.classList.add('light');
+    if (themeToggle) {
+      themeToggle.textContent = mode === 'dark' ? 'Light mode' : 'Dark mode';
+    }
+  }
+
+  function initTheme() {
+    if (!themeToggle) return;
+    const stored = localStorage.getItem('theme');
+    let mode = stored;
+    if (!mode) {
+      mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    applyTheme(mode);
+    themeToggle.addEventListener('click', () => {
+      const current = document.body.classList.contains('dark') ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      applyTheme(next);
+    });
+  }
