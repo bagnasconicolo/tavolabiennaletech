@@ -1054,14 +1054,13 @@ document.addEventListener('DOMContentLoaded', function() {{
   }});
 
   function buildStats() {{
-    const counts = {{
-      'da-cercare': 0,
-      'da-comprare': 0,
-      'in-arrivo': 0,
-      'ottenuto': 0,
-      'inventariato': 0,
-      'completi': 0
-    }};
+    const counts = {{}};
+    legendCounts.forEach(el => {{
+      const key = el.getAttribute('data-count-for');
+      if (key && key !== 'all') {{
+        counts[key] = 0;
+      }}
+    }});
     quarters.forEach(q => {{
       const st = q.getAttribute('data-state');
       if (counts[st] !== undefined) {{
@@ -1070,7 +1069,9 @@ document.addEventListener('DOMContentLoaded', function() {{
     }});
     elementCells.forEach(cell => {{
       if (cell.classList.contains('complete')) {{
-        counts.completi += 1;
+        if (counts.completi !== undefined) {{
+          counts.completi += 1;
+        }}
       }}
     }});
     const total = Object.values(counts).reduce((acc, val) => acc + val, 0);
