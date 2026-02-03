@@ -1,0 +1,59 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 6 0 R /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 2094 >>
+stream
+BT /F2 20 Tf 40 760 Td (App Summary - Periodic Table Sample Tracker) Tj ET
+BT /F2 13 Tf 40 730 Td (What it is) Tj ET
+BT /F1 11 Tf 40 712 Td (Generates an interactive periodic-table HTML view from a Google Sheets) Tj ET
+BT /F1 11 Tf 40 698 Td (tracking spreadsheet via a Google Apps Script web endpoint.) Tj ET
+BT /F2 13 Tf 40 676 Td (Who it's for) Tj ET
+BT /F1 11 Tf 40 658 Td (Exhibit/museum staff managing sample status per element \(e.g., Biennale Tech tracker\).) Tj ET
+BT /F2 13 Tf 40 636 Td (What it does) Tj ET
+BT /F1 11 Tf 40 618 Td (- Fetches element/sample data from a Google Apps Script JSON endpoint.) Tj ET
+BT /F1 11 Tf 40 604 Td (- Maps 118 elements to their positions, including lanthanide and actinide rows.) Tj ET
+BT /F1 11 Tf 40 590 Td (- Renders a grid where each element shows four color-coded samples.) Tj ET
+BT /F1 11 Tf 40 576 Td (- Shows tooltips and click popups with element and per-sample details.) Tj ET
+BT /F1 11 Tf 40 562 Td (- Provides a legend that filters/highlights samples by state.) Tj ET
+BT /F1 11 Tf 40 548 Td (- Highlights element symbols when column A is green \(#b8fb89\).) Tj ET
+BT /F1 11 Tf 40 534 Td (- Writes a standalone HTML file for viewing in a browser.) Tj ET
+BT /F2 13 Tf 40 512 Td (How it works) Tj ET
+BT /F1 11 Tf 40 494 Td (- Google Sheets -> Apps Script \(apps-script/Codice.js\) reads rows/legend and returns JSON.) Tj ET
+BT /F1 11 Tf 40 480 Td (- Python generator \(v3.py\) requests JSON, assembles elements, renders HTML/CSS/JS.) Tj ET
+BT /F1 11 Tf 40 466 Td (- Output HTML saved to html/index.html.) Tj ET
+BT /F1 11 Tf 40 452 Td (- Hosting/serving of the generated HTML: Not found in repo.) Tj ET
+BT /F2 13 Tf 40 430 Td (How to run) Tj ET
+BT /F1 11 Tf 40 412 Td (- Activate venv and ensure requests is installed \(no requirements file found\).) Tj ET
+BT /F1 11 Tf 40 398 Td (- Run: python v3.py --api-url <apps-script-url> --output html/index.html) Tj ET
+BT /F1 11 Tf 40 384 Td (- Open html/index.html in a browser.) Tj ET
+BT /F1 11 Tf 40 370 Td (- Optional full update: ./run.sh \(git pull, clasp sync, generate, commit/push\).) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+2542
+%%EOF

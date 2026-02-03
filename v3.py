@@ -564,72 +564,179 @@ def render_html(
                     )
                     cells_html.append(cell_html)
 
-    # Build legend HTML (with data-state attributes for filters)
+    # Build legend HTML (with data-state attributes for filters and counts)
     legend_html: List[str] = []
+    legend_html.append(
+        '<div class="legend-item active" data-state="">'
+        '<span class="legend-colour" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>'
+        'tutti<span class="legend-count" data-count-for="all">0</span></div>'
+    )
     for label, color in legend_order:
         if not label:
             continue
         color_hex = color if color.startswith('#') else color
-        # Sanitise label for CSS/data attribute
         state_id = sanitize_label(label)
         legend_html.append(
             f'<div class="legend-item" data-state="{esc(state_id)}"><span class="legend-colour" '
-            f'style="background:{esc(color_hex)}"></span>{esc(label)}</div>'
+            f'style="background:{esc(color_hex)}"></span>{esc(label)}'
+            f'<span class="legend-count" data-count-for="{esc(state_id)}">0</span></div>'
         )
+    legend_html.append(
+        '<div class="legend-item" data-state="completi">'
+        '<span class="legend-colour" style="background:#93c47d"></span>'
+        'completi<span class="legend-count" data-count-for="completi">0</span></div>'
+    )
     legend_block = ''.join(legend_html)
 
     # Global CSS
     css = """
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
 :root{
-  --cell-size: clamp(60px, 5.5vw, 90px);
-  --gap: 4px;
+  --cell-size: clamp(34px, 3.6vw, 76px);
+  --gap: 6px;
   --border-radius: 6px;
-  --border-colour: rgba(0,0,0,0.2);
-  --empty-bg: #f5f5f5;
-  --empty-bg-dark: #222;
+  --border-colour: rgba(17, 23, 32, 0.12);
+  --empty-bg: #f6f7f9;
+  --ink: #0f172a;
+  --paper: #ffffff;
+  --accent: #0ea5a4;
+  --accent-2: #f59e0b;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+:root[data-theme="dark"]{
+  --border-colour: rgba(255,255,255,0.15);
+  --empty-bg: #0f1115;
+  --ink: #e5e7eb;
+  --paper: #12151b;
+  --accent: #22d3ee;
+  --accent-2: #fbbf24;
+  --shadow: 0 12px 28px rgba(0,0,0,0.4);
+}
+:root[data-theme="light"]{
+  --border-colour: rgba(17, 23, 32, 0.12);
+  --empty-bg: #f6f7f9;
+  --ink: #0f172a;
+  --paper: #ffffff;
+  --accent: #0ea5a4;
+  --accent-2: #f59e0b;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
 }
 @media (prefers-color-scheme: dark){
-  :root{
-    --border-colour: rgba(255,255,255,0.25);
-    --empty-bg: #20252a;
-    --empty-bg-dark: #111;
+  :root:not([data-theme]){
+    --border-colour: rgba(255,255,255,0.15);
+    --empty-bg: #0f1115;
+    --ink: #e5e7eb;
+    --paper: #12151b;
+    --accent: #22d3ee;
+    --accent-2: #fbbf24;
+    --shadow: 0 12px 28px rgba(0,0,0,0.4);
   }
 }
 body{
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--empty-bg-dark);
-  color: #eee;
+  font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1200px 800px at 80% -10%, rgba(14,165,164,0.15), transparent 60%),
+    radial-gradient(900px 700px at 10% 0%, rgba(245,158,11,0.12), transparent 60%),
+    var(--empty-bg);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+.page{
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 18px 28px;
+}
+.hero{
+  display: grid;
+  gap: 8px;
+  align-items: start;
+  padding: 18px 20px;
+  background: var(--paper);
+  border: 1px solid var(--border-colour);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
 }
 h1{
-  margin: 16px;
-  font-size: 20px;
+  margin: 0;
+  font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: 0.3px;
   text-align: center;
+}
+.meta{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(15,23,42,0.55);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+:root[data-theme="dark"] .meta{
+  color: rgba(229,231,235,0.85);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .meta{
+    color: rgba(229,231,235,0.85);
+  }
+}
+.toolbar{
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+.theme-toggle{
+  border: 1px solid var(--border-colour);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+.theme-toggle:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(15,23,42,0.15);
+}
+.table-wrap{
+  margin: 16px auto 0;
+  padding: 10px 10px 12px;
+  background: var(--paper);
+  border: 1px solid var(--border-colour);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 1200px;
 }
 .table{
   display: grid;
-  grid-template-columns: repeat(18, var(--cell-size));
-  grid-auto-rows: var(--cell-size);
+  grid-template-columns: repeat(18, minmax(0, 1fr));
   gap: var(--gap);
   justify-content: center;
-  padding: 16px;
+  width: 100%;
 }
 .cell{
   position: relative;
-  width: var(--cell-size);
-  height: var(--cell-size);
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border: 1px solid var(--border-colour);
   border-radius: var(--border-radius);
   background: var(--empty-bg);
+  box-shadow: 0 4px 12px rgba(15,23,42,0.08);
 }
 .cell.empty{
   background: transparent;
   border: none;
+  box-shadow: none;
 }
 .cell.spacer{
-  height: calc(var(--cell-size) / 2);
+  aspect-ratio: 2 / 1;
   background: transparent;
   border: none;
+  box-shadow: none;
 }
 .cell.element{
   /* sempre sfondo chiaro e testo nero per leggibilità */
@@ -637,6 +744,26 @@ h1{
   color: #000000;
   overflow: hidden;
   cursor: default;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.cell.element.filtered{
+  opacity: 0.15;
+}
+.cell.element.complete .symbol{
+  background: #b8fb89;
+  border-radius: 4px;
+  padding: 2px 4px;
+  display: inline-block;
+}
+@media (prefers-color-scheme: dark){
+  .cell.element{
+    background: #f8fafc;
+    color: #0f172a;
+  }
+}
+.cell.element:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(15,23,42,0.18);
 }
 /* nessuna variazione in dark mode: il testo resta nero */
 .symbol{
@@ -671,6 +798,7 @@ h1{
   justify-content: center;
   font-size: 11px;
   color: #000000;
+  transition: opacity 120ms ease;
 }
 .samples .quarter .sidx{
   position: absolute;
@@ -691,25 +819,44 @@ h1{
   cursor: pointer;
 }
 .legend-item.active{
-  box-shadow: 0 0 0 2px rgba(0,120,212,0.8);
+  box-shadow: 0 0 0 2px var(--accent);
 }
 .legend{
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  padding: 8px 16px 24px 16px;
+  padding: 8px 0 6px 0;
   font-size: 13px;
 }
 .legend-item{
   display: flex;
   align-items: center;
   gap: 4px;
-  background: var(--empty-bg);
+  background: var(--paper);
   border: 1px solid var(--border-colour);
   border-radius: var(--border-radius);
   padding: 2px 6px;
-  color: #000000; /* testi neri sui bottoni della legenda */
+  color: var(--ink);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+.legend-count{
+  margin-left: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.08);
+  font-size: 11px;
+}
+:root[data-theme="dark"] .legend-count{
+  background: rgba(255,255,255,0.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .legend-count{
+    background: rgba(255,255,255,0.12);
+  }
+}
+.legend-item:hover{
+  transform: translateY(-1px);
 }
 .legend-colour{
   width: 14px;
@@ -737,18 +884,85 @@ h1{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #ffffff;
-    color: #000000;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    max-width: 320px;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    max-width: 360px;
     min-width: 260px;
     display: none;
     z-index: 1000;
   }
+  :root[data-theme="dark"] .popup{
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 24px rgba(255,255,255,0.2), var(--shadow);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme]) .popup{
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 24px rgba(255,255,255,0.2), var(--shadow);
+    }
+  }
   .popup.visible{
     display: block;
+  }
+  .popup h2{
+    margin: 0 0 8px 0;
+    font-size: 18px;
+  }
+  .popup h2.complete{
+    background: #93c47d;
+    color: #0b2a14;
+    padding: 6px 8px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+  .popup ul{
+    margin: 8px 0 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .popup li{
+    display: grid;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(15,23,42,0.04);
+  }
+  .popup .sample-row{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .popup .sample-dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.15);
+    display: inline-block;
+    flex: 0 0 10px;
+  }
+  @media (prefers-color-scheme: dark){
+    .popup li{
+      background: rgba(255,255,255,0.05);
+    }
+  }
+  .popup .close{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: rgba(15,23,42,0.06);
+    color: var(--ink);
+    font-size: 14px;
+    border-radius: 999px;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+  .popup .close:hover{
+    background: rgba(15,23,42,0.12);
   }
 """
 
@@ -773,55 +987,210 @@ h1{
         elements_js_entries.append(f"{elem.z}: {json.dumps(entry)}")
     elements_js_object = "{\n    " + ",\n    ".join(elements_js_entries) + "\n  }"
 
+    # Build state->color mapping for popup dots
+    state_colors = {
+        sanitize_label(label): color
+        for label, color in label_colors.items()
+        if label
+    }
+    state_colors_js = json.dumps(state_colors)
+
     # JavaScript for filters and popups
     script = f"""
 <script>
 const elementsData = {elements_js_object};
+const stateColors = {state_colors_js};
 document.addEventListener('DOMContentLoaded', function() {{
-  const legendItems = document.querySelectorAll('.legend-item');
-  legendItems.forEach(item => {{
-    item.addEventListener('click', function() {{
-      const state = this.getAttribute('data-state');
-      legendItems.forEach(li => li.classList.toggle('active', li === this));
-      document.querySelectorAll('.quarter').forEach(q => {{
-        const qState = q.getAttribute('data-state');
-        if (!state || state === '') {{
-          q.classList.remove('filtered');
-        }} else if (qState !== state) {{
-          q.classList.add('filtered');
-        }} else {{
-          q.classList.remove('filtered');
-        }}
-      }});
-    }});
-  }});
+  const legendItems = Array.from(document.querySelectorAll('.legend-item'));
+  const quarters = Array.from(document.querySelectorAll('.quarter'));
+  const elementCells = Array.from(document.querySelectorAll('.cell.element'));
+  const legendCounts = Array.from(document.querySelectorAll('.legend-count'));
+  const deployMetaEl = document.getElementById('deploy-meta');
+  const themeToggle = document.getElementById('theme-toggle');
   // Popup handling
   const overlay = document.getElementById('overlay');
   const popup = document.getElementById('popup');
-  // Close popup when clicking outside
-  overlay.addEventListener('click', function() {{
+
+  function setActiveLegend(target) {{
+    legendItems.forEach(li => li.classList.toggle('active', li === target));
+  }}
+
+  function applyFilter(state) {{
+    if (state === 'completi') {{
+      quarters.forEach(q => q.classList.remove('filtered'));
+      elementCells.forEach(cell => {{
+        cell.classList.toggle('filtered', !cell.classList.contains('complete'));
+      }});
+      return;
+    }}
+    elementCells.forEach(cell => cell.classList.remove('filtered'));
+    quarters.forEach(q => {{
+      const qState = q.getAttribute('data-state');
+      if (!state) {{
+        q.classList.remove('filtered');
+      }} else if (qState !== state) {{
+        q.classList.add('filtered');
+      }} else {{
+        q.classList.remove('filtered');
+      }}
+    }});
+  }}
+
+  legendItems.forEach(item => {{
+    item.addEventListener('click', function() {{
+      const state = this.getAttribute('data-state');
+      const isActive = this.classList.contains('active');
+      if (isActive && state) {{
+        const allItem = legendItems.find(li => li.getAttribute('data-state') === '');
+        if (allItem) {{
+          setActiveLegend(allItem);
+        }}
+        applyFilter('');
+        return;
+      }}
+      setActiveLegend(this);
+      applyFilter(state);
+    }});
+  }});
+
+  function buildStats() {{
+    const counts = {{
+      'da-cercare': 0,
+      'da-comprare': 0,
+      'in-arrivo': 0,
+      'ottenuto': 0,
+      'inventariato': 0,
+      'completi': 0
+    }};
+    quarters.forEach(q => {{
+      const st = q.getAttribute('data-state');
+      if (counts[st] !== undefined) {{
+        counts[st] += 1;
+      }}
+    }});
+    elementCells.forEach(cell => {{
+      if (cell.classList.contains('complete')) {{
+        counts.completi += 1;
+      }}
+    }});
+    const total = Object.values(counts).reduce((acc, val) => acc + val, 0);
+    legendCounts.forEach(el => {{
+      const key = el.getAttribute('data-count-for');
+      if (key === 'all') {{
+        el.textContent = total;
+      }} else if (counts[key] !== undefined) {{
+        el.textContent = counts[key];
+      }}
+    }});
+  }}
+
+  function applyTheme(mode) {{
+    const root = document.documentElement;
+    if (!root) return;
+    if (mode === 'dark' || mode === 'light') {{
+      root.setAttribute('data-theme', mode);
+    }} else {{
+      root.removeAttribute('data-theme');
+    }}
+    if (themeToggle) {{
+      themeToggle.textContent = mode === 'dark' ? 'Light mode' : 'Dark mode';
+    }}
+  }}
+
+  function initTheme() {{
+    if (!themeToggle) return;
+    const stored = localStorage.getItem('theme');
+    let mode = stored;
+    if (!mode) {{
+      mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }}
+    applyTheme(mode);
+    themeToggle.addEventListener('click', () => {{
+      const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      applyTheme(next);
+    }});
+  }}
+
+  async function loadLatestCommit() {{
+    if (!deployMetaEl) return;
+    const owner = 'bagnasconicolo';
+    const repo = 'tavolabiennaletech';
+    try {{
+      const res = await fetch(`https://api.github.com/repos/${{owner}}/${{repo}}/commits?per_page=1`, {{
+        headers: {{ 'Accept': 'application/vnd.github+json' }}
+      }});
+      if (!res.ok) throw new Error('GitHub API error');
+      const commits = await res.json();
+      const latest = Array.isArray(commits) ? commits[0] : null;
+      const committedAt = latest?.commit?.committer?.date || latest?.commit?.author?.date;
+      if (!committedAt) throw new Error('No commit data');
+      const dt = new Date(committedAt);
+      const formatted = dt.toLocaleString('it-IT', {{
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }});
+      deployMetaEl.textContent = `Ultimo commit: ${{formatted}}`;
+    }} catch (err) {{
+      deployMetaEl.textContent = 'Ultimo commit: non disponibile';
+    }}
+  }}
+
+  function computeCompleteElements() {{
+    elementCells.forEach(cell => {{
+      const symbolEl = cell.querySelector('.symbol');
+      if (!symbolEl) return;
+      const inlineBg = symbolEl.style.backgroundColor || symbolEl.style.background;
+      const complete = Boolean(inlineBg && inlineBg !== 'transparent' && inlineBg !== 'initial');
+      cell.classList.toggle('complete', complete);
+    }});
+  }}
+
+  function closePopup() {{
     overlay.classList.remove('visible');
     popup.classList.remove('visible');
+  }}
+
+  overlay.addEventListener('click', closePopup);
+  document.addEventListener('keydown', (e) => {{
+    if (e.key === 'Escape') {{
+      closePopup();
+    }}
   }});
+
   // Attach click handlers on element cells
-  document.querySelectorAll('.cell.element').forEach(el => {{
+  elementCells.forEach(el => {{
     el.addEventListener('click', function(e) {{
       e.stopPropagation();
       const z = this.getAttribute('data-z');
       const info = elementsData[z];
       if (!info) return;
-      let html = `<h2>${{info.symbol}} – ${{info.name}} (Z=${{info.z}})</h2><ul>`;
+      const complete = this.classList.contains('complete');
+      let html = `<button class="close" aria-label="Chiudi">Chiudi</button>`;
+      html += `<h2 class="${{complete ? 'complete' : ''}}">${{info.symbol}} – ${{info.name}} (Z=${{info.z}})</h2><ul>`;
       info.samples.forEach((s, i) => {{
-        const st = s.state ? s.state : '-';
-        const val = s.value ? s.value : '';
-        html += `<li><strong>Campione ${{i+1}}:</strong> ${{st}} – ${{val}}</li>`;
+        const st = s.state ? s.state : 'non definito';
+        const val = s.value ? s.value : '—';
+        const key = st.replace(/\\s+/g, '-').toLowerCase();
+        const color = stateColors[key] || '#e5e7eb';
+        html += `<li><span class="sample-row"><span class="sample-dot" style="background:${{color}}"></span><strong>Campione ${{i+1}}:</strong></span> ${{st}} · ${{val}}</li>`;
       }});
       html += '</ul>';
       popup.innerHTML = html;
+      popup.querySelector('.close').addEventListener('click', closePopup);
       overlay.classList.add('visible');
       popup.classList.add('visible');
     }});
   }});
+
+  computeCompleteElements();
+  buildStats();
+  initTheme();
+  loadLatestCommit();
 }});
 </script>
 """
@@ -836,12 +1205,26 @@ document.addEventListener('DOMContentLoaded', function() {{
         "  <style>" + css + "</style>",
         "</head>",
         "<body>",
-        f"  <h1>{esc(title)}</h1>",
-        "  <div class=\"table\">",
+        "  <div class=\"page\">",
+        "    <section class=\"hero\">",
+        f"      <h1>{esc(title)}</h1>",
+        "      <div class=\"meta\">",
+        "        <span id=\"deploy-meta\">Ultimo commit: in caricamento…</span>",
+        "        <button id=\"theme-toggle\" class=\"theme-toggle\" type=\"button\">Dark mode</button>",
+        "      </div>",
+        "    </section>",
+        "",
+        "    <div class=\"table-wrap\">",
+        "      <div class=\"table\">",
         "    " + "".join(cells_html),
-        "  </div>",
-        "  <div class=\"legend\">",
-        "    " + legend_block,
+        "      </div>",
+        "    </div>",
+        "",
+        "    <section class=\"toolbar\">",
+        "      <div class=\"legend\">",
+        "        " + legend_block,
+        "      </div>",
+        "    </section>",
         "  </div>",
         # overlay and popup containers for click details
         "  <div id=\"overlay\" class=\"overlay\"></div>",
