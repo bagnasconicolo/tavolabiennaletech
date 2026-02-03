@@ -1,0 +1,53 @@
+
+================================
+🚀 Tracker Update Script
+================================
+
+[0;36m[14:59:54] INFO[0m Avvio con opzioni: 
+[0;36m[14:59:54] INFO[0m Log file: logs/run_20260203_145954.log
+[0;36m[14:59:54] INFO[0m Working dir: /Users/bagnasco/tavolabiennaletech
+[0;36m[14:59:54] INFO[0m User: bagnasco
+[0;36m[14:59:54] INFO[0m Host: Nicolos-MacBook-Air-2.local
+[0;36m[14:59:54] INFO[0m OS: Darwin Nicolos-MacBook-Air-2.local 25.2.0 Darwin Kernel Version 25.2.0: Tue Nov 18 21:09:34 PST 2025; root:xnu-12377.61.12~1/RELEASE_ARM64_T8112 arm64
+[0;36m[14:59:54] INFO[0m Git branch: main
+[0;36m[14:59:54] INFO[0m Git status:
+## main...origin/main
+?? logs/run_20260203_145954.log
+[0;36m[14:59:54] INFO[0m [1/14] Attivo ambiente virtuale
+[█░░░░░░░░░░░░░░░░░░░]   7%
+
+[0;36m[14:59:54] INFO[0m Python: Python 3.12.10
+[0;36m[14:59:55] INFO[0m Pip: pip 25.0.1 from /Users/bagnasco/tavolabiennaletech/venv/lib/python3.12/site-packages/pip (python 3.12)
+[0;32m[14:59:55] OK[0m [2/14] Ambiente pronto
+[██░░░░░░░░░░░░░░░░░░]  14%
+
+[0;36m[14:59:55] INFO[0m [3/14] Aggiornamento repository
+[████░░░░░░░░░░░░░░░░]  21%
+[0;36m[14:59:55] INFO[0m Solo logs/.DS_Store sporchi: eseguo git pull con autostash
+[0;32m[14:59:55] OK[0m [4/14] Repository aggiornato
+[█████░░░░░░░░░░░░░░░]  28%
+
+[0;36m[14:59:55] INFO[0m [5/14] Sync Apps Script
+[███████░░░░░░░░░░░░░]  35%
+[0;36m[14:59:57] INFO[0m clasp: 3.2.0
+[0;36m[14:59:59] INFO[0m Nessuna modifica Apps Script
+[0;32m[14:59:59] OK[0m [6/14] Apps Script sync completato
+[████████░░░░░░░░░░░░]  42%
+
+[0;36m[14:59:59] INFO[0m [7/14] Generazione HTML
+[██████████░░░░░░░░░░]  50%
+Generated ./html/index.html successfully.
+Generated /Users/bagnasco/tavolabiennaletech/html/mobile.html successfully.
+
+[0;32m[15:00:06] OK[0m [8/14] HTML generato
+[███████████░░░░░░░░░]  57%
+
+[0;36m[15:00:06] INFO[0m [9/14] Generazione PDF
+[████████████░░░░░░░░]  64%
+Generated output/elementi_report.pdf
+
+[0;32m[15:00:15] OK[0m [10/14] PDF generato
+[██████████████░░░░░░]  71%
+
+[0;36m[15:00:15] INFO[0m [11/14] Staging
+[███████████████░░░░░]  78%

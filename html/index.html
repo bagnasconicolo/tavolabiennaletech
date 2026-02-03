@@ -89,6 +89,13 @@ h1{
   justify-content: center;
   text-align: center;
 }
+.meta-actions{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 :root[data-theme="dark"] .meta{
   color: rgba(229,231,235,0.85);
 }
@@ -102,7 +109,7 @@ h1{
   gap: 12px;
   margin-top: 16px;
 }
-.theme-toggle{
+.action-btn{
   border: 1px solid var(--border-colour);
   background: var(--paper);
   color: var(--ink);
@@ -111,10 +118,17 @@ h1{
   font-size: 12px;
   cursor: pointer;
   transition: transform 140ms ease, box-shadow 140ms ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.theme-toggle:hover{
+.action-btn:hover{
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(15,23,42,0.15);
+}
+.action-btn.secondary{
+  background: rgba(14,165,164,0.08);
 }
 .table-wrap{
   margin: 16px auto 0;
@@ -396,7 +410,10 @@ h1{
       <h1>Tracker progressi - Piccolo Museo della Tavola Periodica</h1>
       <div class="meta">
         <span id="deploy-meta">Ultimo commit: in caricamento…</span>
-        <button id="theme-toggle" class="theme-toggle" type="button">Dark mode</button>
+        <div class="meta-actions">
+          <button id="theme-toggle" class="action-btn" type="button">Dark mode</button>
+          <a class="action-btn secondary" href="mobile.html">Vista mobile</a>
+        </div>
       </div>
     </section>
 
