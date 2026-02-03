@@ -1,5 +1,12 @@
 #!/bin/bash
 
+LOG_DIR="logs"
+RUN_TS="$(date +"%Y%m%d_%H%M%S")"
+LOG_FILE="${LOG_DIR}/run_${RUN_TS}.log"
+mkdir -p "$LOG_DIR"
+
+exec > >(tee -a "$LOG_FILE") 2>&1
+
 # Loading bar function
 show_progress() {
   local current=$1
@@ -56,6 +63,14 @@ echo "🚀 Tracker Update Script"
 echo "================================"
 echo ""
 log_info "Avvio con opzioni: $*"
+log_info "Log file: ${LOG_FILE}"
+log_info "Working dir: $(pwd)"
+log_info "User: $(whoami)"
+log_info "Host: $(hostname)"
+log_info "OS: $(uname -a)"
+log_info "Git branch: $(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'n/a')"
+log_info "Git status:"
+git status -sb
 
 TOTAL_STEPS=14
 APPS_SCRIPT_DIR="apps-script"
@@ -70,6 +85,8 @@ else
   source venv/bin/activate
 fi
 echo ""
+log_info "Python: $(python --version 2>&1)"
+log_info "Pip: $(pip --version 2>&1)"
 log_ok "[2/${TOTAL_STEPS}] Ambiente pronto"
 show_progress 2 "$TOTAL_STEPS"
 echo ""
@@ -78,6 +95,8 @@ log_info "[3/${TOTAL_STEPS}] Aggiornamento repository"
 show_progress 3 "$TOTAL_STEPS"
 if ! git diff --quiet || ! git diff --cached --quiet; then
   log_warn "Working tree dirty: salto git pull"
+  log_info "Git diff --stat:"
+  git diff --stat || true
 else
   git pull >/dev/null
 fi
@@ -88,6 +107,7 @@ echo ""
 log_info "[5/${TOTAL_STEPS}] Sync Apps Script"
 show_progress 5 "$TOTAL_STEPS"
 if command -v clasp >/dev/null 2>&1; then
+  log_info "clasp: $(clasp --version 2>&1)"
   if [[ -f ".clasp.json" ]]; then
     clasp pull >/dev/null
     if git status --porcelain "$APPS_SCRIPT_DIR" | grep -q .; then
