@@ -7,7 +7,7 @@
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
 :root{
-  --cell-size: clamp(30px, 3.2vw, 72px);
+  --cell-size: clamp(32px, 3.4vw, 74px);
   --gap: 6px;
   --border-radius: 10px;
   --border-colour: rgba(17, 23, 32, 0.12);
@@ -58,7 +58,7 @@ body{
   overflow-x: hidden;
 }
 .page{
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 20px 18px 28px;
 }
@@ -83,9 +83,12 @@ h1{
   font-size: clamp(14px, 1.6vw, 18px);
   color: rgba(15,23,42,0.65);
 }
+:root[data-theme="dark"] .subtitle{
+  color: rgba(229,231,235,0.85);
+}
 @media (prefers-color-scheme: dark){
-  .subtitle{
-    color: rgba(229,231,235,0.7);
+  :root:not([data-theme]) .subtitle{
+    color: rgba(229,231,235,0.85);
   }
 }
 .meta{
@@ -120,28 +123,6 @@ h1{
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(15,23,42,0.15);
 }
-.stats{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-.stat{
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border-colour);
-  background: var(--paper);
-  font-size: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.stat .dot{
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
 .table-wrap{
   margin: 16px auto 0;
   padding: 10px 10px 12px;
@@ -150,7 +131,7 @@ h1{
   border-radius: 16px;
   box-shadow: var(--shadow);
   width: 100%;
-  max-width: 1100px;
+  max-width: 1160px;
 }
 .table{
   display: grid;
@@ -272,6 +253,21 @@ h1{
   color: var(--ink);
   transition: transform 140ms ease, box-shadow 140ms ease;
 }
+.legend-count{
+  margin-left: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.08);
+  font-size: 11px;
+}
+:root[data-theme="dark"] .legend-count{
+  background: rgba(255,255,255,0.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]) .legend-count{
+    background: rgba(255,255,255,0.12);
+  }
+}
 .legend-item:hover{
   transform: translateY(-1px);
 }
@@ -310,6 +306,14 @@ h1{
     min-width: 260px;
     display: none;
     z-index: 1000;
+  }
+  :root[data-theme="dark"] .popup{
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 24px rgba(255,255,255,0.2), var(--shadow);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme]) .popup{
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 0 24px rgba(255,255,255,0.2), var(--shadow);
+    }
   }
   .popup.visible{
     display: block;
@@ -382,14 +386,13 @@ h1{
 
     <section class="toolbar">
       <div class="legend">
-        <div class="legend-item active" data-state=""><span class="legend-colour" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>tutti</div>
-        <div class="legend-item" data-state="da-cercare"><span class="legend-colour" style="background:#434343"></span>da cercare</div>
-        <div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare</div>
-        <div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo</div>
-        <div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto</div>
-        <div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato</div>
+        <div class="legend-item active" data-state=""><span class="legend-colour" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>tutti<span class="legend-count" data-count-for="all">0</span></div>
+        <div class="legend-item" data-state="da-cercare"><span class="legend-colour" style="background:#434343"></span>da cercare<span class="legend-count" data-count-for="da-cercare">0</span></div>
+        <div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare<span class="legend-count" data-count-for="da-comprare">0</span></div>
+        <div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo<span class="legend-count" data-count-for="in-arrivo">0</span></div>
+        <div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto<span class="legend-count" data-count-for="ottenuto">0</span></div>
+        <div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato<span class="legend-count" data-count-for="inventariato">0</span></div>
       </div>
-      <div id="stats" class="stats"></div>
     </section>
 
     <div class="table-wrap">
@@ -886,7 +889,7 @@ const elementsData = {
 document.addEventListener('DOMContentLoaded', function() {
   const legendItems = Array.from(document.querySelectorAll('.legend-item'));
   const quarters = Array.from(document.querySelectorAll('.quarter'));
-  const statsEl = document.getElementById('stats');
+  const legendCounts = Array.from(document.querySelectorAll('.legend-count'));
   const deployMetaEl = document.getElementById('deploy-meta');
   const themeToggle = document.getElementById('theme-toggle');
   const overlay = document.getElementById('overlay');
@@ -940,16 +943,15 @@ document.addEventListener('DOMContentLoaded', function() {
         counts[st] += 1;
       }
     });
-    const statHtml = [
-      { key: 'da-cercare', label: 'da cercare', color: '#434343' },
-      { key: 'da-comprare', label: 'da comprare', color: '#e06666' },
-      { key: 'in-arrivo', label: 'in arrivo', color: '#ffd966' },
-      { key: 'ottenuto', label: 'ottenuto', color: '#93c47d' },
-      { key: 'inventariato', label: 'inventariato', color: '#a4c2f4' }
-    ].map(item => (
-      `<span class="stat"><span class="dot" style="background:${item.color}"></span>${item.label}: ${counts[item.key]}</span>`
-    )).join('');
-    statsEl.innerHTML = statHtml;
+    const total = Object.values(counts).reduce((acc, val) => acc + val, 0);
+    legendCounts.forEach(el => {
+      const key = el.getAttribute('data-count-for');
+      if (key === 'all') {
+        el.textContent = total;
+      } else if (counts[key] !== undefined) {
+        el.textContent = counts[key];
+      }
+    });
   }
 
   const stateColors = {
