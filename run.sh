@@ -12,6 +12,7 @@ show_progress() {
   printf "%${filled}s" | tr ' ' '█'
   printf "%${empty}s" | tr ' ' '░'
   printf "] %3d%%" "$percent"
+  printf "\n"
 }
 
 RED="\033[0;31m"
@@ -128,7 +129,6 @@ else
   python generate_pdf_report.py \
     --api-url "https://script.google.com/macros/s/AKfycbz2T-xieiHlll6pCUfHaoP9GQHACdcJhDD52Z5pCoSCj1S09vhzRZfL2kNJHJ-l8kL9cA/exec" \
     --output ./output/elementi_report.pdf \
-    --title "Report campioni per elemento" \
     --subtitle "Piccolo Museo della Tavola Periodica @ Biennale Tech 2026"
   echo ""
   log_ok "[10/${TOTAL_STEPS}] PDF generato"

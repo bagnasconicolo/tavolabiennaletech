@@ -147,6 +147,8 @@ def build_elements_from_csv(path: Path, symbol_col: str, name_col: str) -> List[
 
 def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) -> str:
     today = date.today().strftime("%Y-%m-%d")
+    if "{date}" in title:
+        title = title.replace("{date}", today)
     header = r"""
 \documentclass[10pt,a4paper]{article}
 \usepackage[T1]{fontenc}
@@ -264,7 +266,7 @@ def main() -> int:
     parser.add_argument("--csv", type=Path, help="Optional CSV source instead of API")
     parser.add_argument("--csv-symbol", default="symbol", help="CSV column for element symbol")
     parser.add_argument("--csv-name", default="name", help="CSV column for element name")
-    parser.add_argument("--title", default="Report campioni per elemento")
+    parser.add_argument("--title", default="Report Collezione aggiornato al {date}")
     parser.add_argument(
         "--subtitle",
         default="Piccolo Museo della Tavola Periodica @ Biennale Tech 2026",
