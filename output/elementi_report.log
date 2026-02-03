@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.24)  3 FEB 2026 11:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.24)  3 FEB 2026 11:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -277,7 +277,7 @@ LaTeX Font Info:    ... okay on input line 31.
 \makeMPintoPDFobject=\count281
 \everyMPtoPDFconversion=\toks25
 )
-Underfull \hbox (badness 10000) in alignment at lines 186--186
+Underfull \hbox (badness 10000) in alignment at lines 188--188
 []
  []
 
@@ -286,129 +286,130 @@ ocal/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
 
 {/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
  [2]
-Underfull \hbox (badness 10000) in alignment at lines 631--631
-[]
- []
-
 [3]
-Underfull \hbox (badness 10000) in alignment at lines 816--816
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 853--853
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 860--860
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 867--867
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 883--883
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 901--901
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 919--919
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 951--951
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 958--958
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 965--965
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 996--996
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 1003--1003
+Underfull \hbox (badness 10000) in alignment at lines 633--633
 []
  []
 
 [4]
-Underfull \hbox (badness 10000) in alignment at lines 1035--1035
+Underfull \hbox (badness 10000) in alignment at lines 818--818
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1042--1042
+Underfull \hbox (badness 10000) in alignment at lines 855--855
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1049--1049
+Underfull \hbox (badness 10000) in alignment at lines 862--862
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1064--1064
+Underfull \hbox (badness 10000) in alignment at lines 869--869
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1071--1071
+Underfull \hbox (badness 10000) in alignment at lines 885--885
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1086--1086
+Underfull \hbox (badness 10000) in alignment at lines 903--903
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1093--1093
+Underfull \hbox (badness 10000) in alignment at lines 921--921
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1100--1100
+Underfull \hbox (badness 10000) in alignment at lines 953--953
 []
  []
 
-[5] (output/elementi_report.aux) ) 
+
+Underfull \hbox (badness 10000) in alignment at lines 960--960
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 967--967
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 998--998
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 1005--1005
+[]
+ []
+
+[5]
+Underfull \hbox (badness 10000) in alignment at lines 1037--1037
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 1044--1044
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 1051--1051
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 1066--1066
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 1073--1073
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 1088--1088
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 1095--1095
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in alignment at lines 1102--1102
+[]
+ []
+
+[6] (output/elementi_report.aux) ) 
 Here is how much of TeX's memory you used:
- 3398 strings out of 476025
- 51306 string characters out of 5790017
+ 3401 strings out of 476025
+ 51348 string characters out of 5790017
  1884388 words of memory out of 5000000
- 23850 multiletter control sequences out of 15000+600000
- 519060 words of font info for 45 fonts, out of 8000000 for 9000
+ 23852 multiletter control sequences out of 15000+600000
+ 519397 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,12n,62p,190b,428s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,12n,62p,234b,413s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/typ
 e1/public/cm-super/sfbx0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1
 /public/cm-super/sfbx1728.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/p
 ublic/cm-super/sfrm0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/pub
 lic/cm-super/sfrm1000.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/publi
 c/cm-super/sfrm1200.pfb>
-Output written on output/elementi_report.pdf (5 pages, 109348 bytes).
+Output written on output/elementi_report.pdf (6 pages, 110818 bytes).
 PDF statistics:
- 47 PDF objects out of 1000 (max. 8388607)
- 29 compressed objects within 1 object stream
+ 53 PDF objects out of 1000 (max. 8388607)
+ 33 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
