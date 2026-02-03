@@ -79,19 +79,6 @@ h1{
   letter-spacing: 0.3px;
   text-align: center;
 }
-.subtitle{
-  margin: 0;
-  font-size: clamp(14px, 1.6vw, 18px);
-  color: rgba(15,23,42,0.65);
-}
-:root[data-theme="dark"] .subtitle{
-  color: rgba(229,231,235,0.85);
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme]) .subtitle{
-    color: rgba(229,231,235,0.85);
-  }
-}
 .meta{
   display: flex;
   flex-wrap: wrap;
@@ -397,7 +384,7 @@ h1{
 <body>
   <div class="page">
     <section class="hero">
-      <h1>Tracker progressi – Piccolo Museo della Tavola Periodica</h1>
+      <h1>Tracker progressi - Piccolo Museo della Tavola Periodica @ Biennale Tech 2026 – campioni</h1>
       <div class="meta">
         <span id="deploy-meta">Ultimo commit: in caricamento…</span>
         <button id="theme-toggle" class="theme-toggle" type="button">Dark mode</button>
@@ -643,9 +630,9 @@ Z=78
 2: in arrivo; Elettrodo di riferimento" data-z="78"><div class="number">78</div><div class="symbol">Pt</div><div class="samples"><div class="quarter state-inventariato" style="background:#a4c2f4" data-state="inventariato" data-tip="inventariato | lamette personna/gillette platinum"><span class="sidx">1</span></div><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | Elettrodo di riferimento"><span class="sidx">2</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">3</span></div><div class="quarter" style="background:#ffffff" data-state="" data-tip=""><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Gold
 Z=79
 1: da cercare; Pepite
-2: inventariato; Foglie
+2: inventariato; Foglie 24k
 3: in arrivo; francobolli tonga
-4: inventariato; Chip Placcati INFN" data-z="79"><div class="number">79</div><div class="symbol">Au</div><div class="samples"><div class="quarter state-da-cercare" style="background:#434343" data-state="da-cercare" data-tip="da cercare | Pepite"><span class="sidx">1</span></div><div class="quarter state-inventariato" style="background:#a4c2f4" data-state="inventariato" data-tip="inventariato | Foglie"><span class="sidx">2</span></div><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | francobolli tonga"><span class="sidx">3</span></div><div class="quarter state-inventariato" style="background:#a4c2f4" data-state="inventariato" data-tip="inventariato | Chip Placcati INFN"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Mercury
+4: inventariato; Chip Placcati INFN" data-z="79"><div class="number">79</div><div class="symbol">Au</div><div class="samples"><div class="quarter state-da-cercare" style="background:#434343" data-state="da-cercare" data-tip="da cercare | Pepite"><span class="sidx">1</span></div><div class="quarter state-inventariato" style="background:#a4c2f4" data-state="inventariato" data-tip="inventariato | Foglie 24k"><span class="sidx">2</span></div><div class="quarter state-in-arrivo" style="background:#ffd966" data-state="in-arrivo" data-tip="in arrivo | francobolli tonga"><span class="sidx">3</span></div><div class="quarter state-inventariato" style="background:#a4c2f4" data-state="inventariato" data-tip="inventariato | Chip Placcati INFN"><span class="sidx">4</span></div></div></div><div class="cell element" data-tip="Mercury
 Z=80
 1: campione puro
 2: inventariato; valvola rettificatrice
@@ -773,13 +760,7 @@ Z=103" data-z="103"><div class="number">103</div><div class="symbol">Lr</div><di
 
     <section class="toolbar">
       <div class="legend">
-        <div class="legend-item active" data-state=""><span class="legend-colour" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>tutti<span class="legend-count" data-count-for="all">0</span></div>
-        <div class="legend-item" data-state="da-cercare"><span class="legend-colour" style="background:#434343"></span>da cercare<span class="legend-count" data-count-for="da-cercare">0</span></div>
-        <div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare<span class="legend-count" data-count-for="da-comprare">0</span></div>
-        <div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo<span class="legend-count" data-count-for="in-arrivo">0</span></div>
-        <div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto<span class="legend-count" data-count-for="ottenuto">0</span></div>
-        <div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato<span class="legend-count" data-count-for="inventariato">0</span></div>
-        <div class="legend-item" data-state="completi"><span class="legend-colour" style="background:#93c47d"></span>completi<span class="legend-count" data-count-for="completi">0</span></div>
+        <div class="legend-item active" data-state=""><span class="legend-colour" style="background:linear-gradient(135deg,#e5e7eb,#ffffff)"></span>tutti<span class="legend-count" data-count-for="all">0</span></div><div class="legend-item" data-state="da-cercare"><span class="legend-colour" style="background:#434343"></span>da cercare<span class="legend-count" data-count-for="da-cercare">0</span></div><div class="legend-item" data-state="da-comprare"><span class="legend-colour" style="background:#e06666"></span>da comprare<span class="legend-count" data-count-for="da-comprare">0</span></div><div class="legend-item" data-state="in-arrivo"><span class="legend-colour" style="background:#ffd966"></span>in arrivo<span class="legend-count" data-count-for="in-arrivo">0</span></div><div class="legend-item" data-state="ottenuto"><span class="legend-colour" style="background:#93c47d"></span>ottenuto<span class="legend-count" data-count-for="ottenuto">0</span></div><div class="legend-item" data-state="inventariato"><span class="legend-colour" style="background:#a4c2f4"></span>inventariato<span class="legend-count" data-count-for="inventariato">0</span></div><div class="legend-item" data-state="completi"><span class="legend-colour" style="background:#93c47d"></span>completi<span class="legend-count" data-count-for="completi">0</span></div>
       </div>
     </section>
   </div>
@@ -866,7 +847,7 @@ const elementsData = {
     76: {"z": 76, "symbol": "Os", "name": "Osmium", "samples": [{"state": "da comprare", "value": "pallina 1,36g"}, {"state": "da comprare", "value": "puntina fonografo"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
     77: {"z": 77, "symbol": "Ir", "name": "Iridium", "samples": [{"state": "ottenuto", "value": "candela motore"}, {"state": "ottenuto", "value": "pennino stilografica"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
     78: {"z": 78, "symbol": "Pt", "name": "Platinum", "samples": [{"state": "inventariato", "value": "lamette personna/gillette platinum"}, {"state": "in arrivo", "value": "Elettrodo di riferimento"}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
-    79: {"z": 79, "symbol": "Au", "name": "Gold", "samples": [{"state": "da cercare", "value": "Pepite"}, {"state": "inventariato", "value": "Foglie"}, {"state": "in arrivo", "value": "francobolli tonga"}, {"state": "inventariato", "value": "Chip Placcati INFN"}]},
+    79: {"z": 79, "symbol": "Au", "name": "Gold", "samples": [{"state": "da cercare", "value": "Pepite"}, {"state": "inventariato", "value": "Foglie 24k"}, {"state": "in arrivo", "value": "francobolli tonga"}, {"state": "inventariato", "value": "Chip Placcati INFN"}]},
     80: {"z": 80, "symbol": "Hg", "name": "Mercury", "samples": [{"state": "", "value": "campione puro"}, {"state": "inventariato", "value": "valvola rettificatrice"}, {"state": "inventariato", "value": "scatolina cinabro"}, {"state": "inventariato", "value": "Pigmento"}]},
     81: {"z": 81, "symbol": "Tl", "name": "Thallium", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
     82: {"z": 82, "symbol": "Pb", "name": "Lead", "samples": [{"state": "inventariato", "value": "Scatolina e cristallo galena"}, {"state": "inventariato", "value": "Glandes Plumbeae"}, {"state": "da cercare", "value": "campione puro"}, {"state": "inventariato", "value": "Pigmento"}]},
@@ -907,6 +888,7 @@ const elementsData = {
     117: {"z": 117, "symbol": "Ts", "name": "Tennessine", "samples": [{"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]},
     118: {"z": 118, "symbol": "Og", "name": "Oganesson", "samples": [{"state": "", "value": "Francobolli Oganesson"}, {"state": "", "value": ""}, {"state": "", "value": ""}, {"state": "", "value": ""}]}
   };
+const stateColors = {"da-cercare": "#434343", "da-comprare": "#e06666", "in-arrivo": "#ffd966", "ottenuto": "#93c47d", "inventariato": "#a4c2f4"};
 document.addEventListener('DOMContentLoaded', function() {
   const legendItems = Array.from(document.querySelectorAll('.legend-item'));
   const quarters = Array.from(document.querySelectorAll('.quarter'));
@@ -914,6 +896,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const legendCounts = Array.from(document.querySelectorAll('.legend-count'));
   const deployMetaEl = document.getElementById('deploy-meta');
   const themeToggle = document.getElementById('theme-toggle');
+  // Popup handling
   const overlay = document.getElementById('overlay');
   const popup = document.getElementById('popup');
 
@@ -990,14 +973,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  const stateColors = {
-    'da-cercare': '#434343',
-    'da-comprare': '#e06666',
-    'in-arrivo': '#ffd966',
-    'ottenuto': '#93c47d',
-    'inventariato': '#a4c2f4'
-  };
-
   function applyTheme(mode) {
     const root = document.documentElement;
     if (!root) return;
@@ -1054,6 +1029,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  function computeCompleteElements() {
+    elementCells.forEach(cell => {
+      const symbolEl = cell.querySelector('.symbol');
+      if (!symbolEl) return;
+      const inlineBg = symbolEl.style.backgroundColor || symbolEl.style.background;
+      const complete = Boolean(inlineBg && inlineBg !== 'transparent' && inlineBg !== 'initial');
+      cell.classList.toggle('complete', complete);
+    });
+  }
+
   function closePopup() {
     overlay.classList.remove('visible');
     popup.classList.remove('visible');
@@ -1066,16 +1051,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  function computeCompleteElements() {
-    elementCells.forEach(cell => {
-      const symbolEl = cell.querySelector('.symbol');
-      if (!symbolEl) return;
-      const inlineBg = symbolEl.style.backgroundColor || symbolEl.style.background;
-      const complete = Boolean(inlineBg && inlineBg !== 'transparent' && inlineBg !== 'initial');
-      cell.classList.toggle('complete', complete);
-    });
-  }
-
+  // Attach click handlers on element cells
   elementCells.forEach(el => {
     el.addEventListener('click', function(e) {
       e.stopPropagation();
