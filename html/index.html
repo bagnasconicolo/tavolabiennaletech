@@ -7,7 +7,7 @@
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
 :root{
-  --cell-size: clamp(32px, 3.4vw, 74px);
+  --cell-size: clamp(34px, 3.6vw, 76px);
   --gap: 6px;
   --border-radius: 6px;
   --border-colour: rgba(17, 23, 32, 0.12);
@@ -58,7 +58,7 @@ body{
   overflow-x: hidden;
 }
 .page{
-  max-width: 1240px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 20px 18px 28px;
 }
@@ -99,6 +99,8 @@ h1{
   font-size: 12px;
   color: rgba(15,23,42,0.55);
   align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 :root[data-theme="dark"] .meta{
   color: rgba(229,231,235,0.85);
@@ -135,7 +137,7 @@ h1{
   border-radius: 16px;
   box-shadow: var(--shadow);
   width: 100%;
-  max-width: 1160px;
+  max-width: 1200px;
 }
 .table{
   display: grid;
@@ -397,8 +399,7 @@ h1{
     <section class="hero">
       <h1>Tracker progressi – Piccolo Museo della Tavola Periodica</h1>
       <div class="meta">
-        <span id="deploy-meta">Ultimo deployment: in caricamento…</span>
-        <span>Legenda interattiva e dettagli per elemento</span>
+        <span id="deploy-meta">Ultimo commit: in caricamento…</span>
         <button id="theme-toggle" class="theme-toggle" type="button">Dark mode</button>
       </div>
     </section>
@@ -1026,21 +1027,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  async function loadLatestPagesDeploy() {
+  async function loadLatestCommit() {
     if (!deployMetaEl) return;
     const owner = 'bagnasconicolo';
     const repo = 'tavolabiennaletech';
     try {
-      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pages/builds?per_page=1`, {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`, {
         headers: { 'Accept': 'application/vnd.github+json' }
       });
       if (!res.ok) throw new Error('GitHub API error');
-      const builds = await res.json();
-      const latest = Array.isArray(builds) ? builds[0] : null;
-      if (!latest || !latest.created_at) {
-        throw new Error('No build data');
-      }
-      const dt = new Date(latest.created_at);
+      const commits = await res.json();
+      const latest = Array.isArray(commits) ? commits[0] : null;
+      const committedAt = latest?.commit?.committer?.date || latest?.commit?.author?.date;
+      if (!committedAt) throw new Error('No commit data');
+      const dt = new Date(committedAt);
       const formatted = dt.toLocaleString('it-IT', {
         day: '2-digit',
         month: 'long',
@@ -1048,36 +1048,9 @@ document.addEventListener('DOMContentLoaded', function() {
         hour: '2-digit',
         minute: '2-digit'
       });
-      const status = latest.status ? String(latest.status).toLowerCase() : 'unknown';
-      let statusLabel = 'sconosciuto';
-      if (status === 'built') statusLabel = 'ok';
-      if (status === 'errored') statusLabel = 'errore';
-      if (status === 'building') statusLabel = 'in corso';
-      deployMetaEl.textContent = `Ultimo deployment: ${formatted} · stato: ${statusLabel}`;
-      return;
+      deployMetaEl.textContent = `Ultimo commit: ${formatted}`;
     } catch (err) {
-      // Fallback: latest commit date
-      try {
-        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`, {
-          headers: { 'Accept': 'application/vnd.github+json' }
-        });
-        if (!res.ok) throw new Error('GitHub API error');
-        const commits = await res.json();
-        const latest = Array.isArray(commits) ? commits[0] : null;
-        const committedAt = latest?.commit?.committer?.date || latest?.commit?.author?.date;
-        if (!committedAt) throw new Error('No commit data');
-        const dt = new Date(committedAt);
-        const formatted = dt.toLocaleString('it-IT', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        deployMetaEl.textContent = `Ultimo deployment: non disponibile · ultimo commit: ${formatted}`;
-      } catch (err2) {
-        deployMetaEl.textContent = 'Ultimo deployment: non disponibile';
-      }
+      deployMetaEl.textContent = 'Ultimo commit: non disponibile';
     }
   }
 
@@ -1130,7 +1103,7 @@ document.addEventListener('DOMContentLoaded', function() {
   computeCompleteElements();
   buildStats();
   initTheme();
-  loadLatestPagesDeploy();
+  loadLatestCommit();
 });
 </script>
 
