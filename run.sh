@@ -111,7 +111,7 @@ show_progress 7 "$TOTAL_STEPS"
 python v3.py \
   --api-url "https://script.google.com/macros/s/AKfycbz2T-xieiHlll6pCUfHaoP9GQHACdcJhDD52Z5pCoSCj1S09vhzRZfL2kNJHJ-l8kL9cA/exec" \
   --output ./html/index.html \
-  --title "Tracker progressi - Piccolo Museo della Tavola Periodica @ Biennale Tech 2026 – campioni"
+  --title "Tracker progressi - Piccolo Museo della Tavola Periodica"
 echo ""
 log_ok "[8/${TOTAL_STEPS}] HTML generato"
 show_progress 8 "$TOTAL_STEPS"

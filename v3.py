@@ -709,7 +709,7 @@ h1{
   border-radius: 16px;
   box-shadow: var(--shadow);
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
 }
 .table{
   display: grid;
@@ -839,6 +839,14 @@ h1{
   padding: 2px 6px;
   color: var(--ink);
   transition: transform 140ms ease, box-shadow 140ms ease;
+}
+.legend-item[data-state="completi"]{
+  background: linear-gradient(135deg, rgba(147,196,125,0.25), rgba(147,196,125,0.1));
+  border-color: rgba(147,196,125,0.6);
+  font-weight: 600;
+}
+.legend-item[data-state="completi"] .legend-colour{
+  border-color: rgba(147,196,125,0.9);
 }
 .legend-count{
   margin-left: 4px;
