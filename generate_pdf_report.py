@@ -36,6 +36,7 @@ class Sample:
     label: str
     state: str
     value: str
+    color: str
 
 
 @dataclass
@@ -86,6 +87,7 @@ def build_elements_from_api(data: Dict[str, Any]) -> List[ElementEntry]:
                     label=f"Campione {idx}",
                     state=normalize_text(sample.get("state")),
                     value=normalize_text(sample.get("value")),
+                    color=normalize_text(sample.get("color")),
                 )
             )
         if symbol:
@@ -96,7 +98,9 @@ def build_elements_from_api(data: Dict[str, Any]) -> List[ElementEntry]:
         symbol = item["symbol"]
         samples = samples_by_symbol.get(symbol, [])
         if not samples:
-            samples = [Sample(label=f"Campione {i}", state="", value="") for i in range(1, 5)]
+            samples = [
+                Sample(label=f"Campione {i}", state="", value="", color="") for i in range(1, 5)
+            ]
         elements.append(
             ElementEntry(
                 z=item["z"],
@@ -129,7 +133,7 @@ def build_elements_from_csv(path: Path, symbol_col: str, name_col: str) -> List[
         for idx in range(1, 5):
             state = row.get(f"state_{idx}", "")
             value = row.get(f"sample_{idx}", "")
-            samples.append(Sample(label=f"Campione {idx}", state=state, value=value))
+            samples.append(Sample(label=f"Campione {idx}", state=state, value=value, color=""))
         elements.append(
             ElementEntry(
                 z=item["z"],
@@ -154,6 +158,7 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{enumitem}
+\usepackage{xcolor}
 \setlist{leftmargin=*,nosep}
 \setlength{\columnsep}{0.8cm}
 \setlength{\parindent}{0pt}
@@ -165,6 +170,9 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
 \rhead{%(date)s}
 \cfoot{\thepage}
 \titleformat{\section}{\large\bfseries}{}{0pt}{}
+\newcommand{\samplebadge}[1]{\hspace{0.35em}\colorbox{yellow!30}{\strut\textbf{#1}}}
+\newcommand{\sampledot}[1]{\textcolor[HTML]{#1}{\large\textbullet}}
+\newcommand{\sampledotblack}{\textcolor{black}{\large\textbullet}}
 """ % {
         "title": latex_escape(title),
         "date": latex_escape(today),
@@ -173,24 +181,44 @@ def render_latex(title: str, subtitle: str, elements: Iterable[ElementEntry]) ->
     body_lines: List[str] = [
         header,
         r"\begin{document}",
+        r"\raggedright",
         r"\begin{center}",
         rf"{{\LARGE\textbf{{{latex_escape(title)}}}}}\\",
         rf"{{\normalsize {latex_escape(subtitle)}}}\\",
+        r"\vspace{0.2em}",
+        r"\rule{\linewidth}{0.4pt}",
         r"\end{center}",
         r"\vspace{0.4em}",
         r"\begin{multicols}{2}",
+        r"\small",
     ]
 
     for element in elements:
+        filled_count = 0
+        for sample in element.samples:
+            if sample.value or sample.state:
+                filled_count += 1
         label = f"{element.z} {element.symbol} — {element.name}"
         body_lines.append(r"\begin{samepage}")
-        body_lines.append(rf"\textbf{{{latex_escape(label)}}}\\")
+        body_lines.append(
+            rf"\textbf{{{latex_escape(label)}}}\samplebadge{{{filled_count}/4}}\\"
+        )
         body_lines.append(r"\begin{tabularx}{\linewidth}{@{}X@{}}")
         for sample in element.samples:
-            state = sample.state or "-"
-            value = sample.value or "-"
-            details = f"{value} - {state}"
-            body_lines.append(rf"{latex_escape(details)} \\")
+            if not (sample.value or sample.state):
+                continue
+            if sample.value and sample.state:
+                details = f"{sample.value} — {sample.state}"
+            elif sample.value:
+                details = sample.value
+            else:
+                details = sample.state
+            if sample.color:
+                color = sample.color.lstrip("#")
+                bullet = rf"\sampledot{{{color}}}"
+            else:
+                bullet = r"\sampledotblack"
+            body_lines.append(rf"{bullet} {latex_escape(details)} \\")
         body_lines.append(r"\end{tabularx}")
         body_lines.append(r"\vspace{0.2em}")
         body_lines.append(r"\end{samepage}")

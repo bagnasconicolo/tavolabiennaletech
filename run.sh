@@ -14,6 +14,15 @@ show_progress() {
   printf "] %3d%%" "$percent"
 }
 
+SKIP_PDF=0
+for arg in "$@"; do
+  case "$arg" in
+    --skip-pdf|--no-pdf)
+      SKIP_PDF=1
+      ;;
+  esac
+done
+
 echo ""
 echo "================================"
 echo "🚀 Tracker Update Script"
@@ -76,16 +85,24 @@ echo ""
 echo "[8/${TOTAL_STEPS}] HTML generated successfully ✅"
 show_progress 8 "$TOTAL_STEPS"
 echo ""
-echo "[9/${TOTAL_STEPS}] Generating PDF report..."
-show_progress 9 "$TOTAL_STEPS"
-python generate_pdf_report.py \
-  --api-url "https://script.google.com/macros/s/AKfycbz2T-xieiHlll6pCUfHaoP9GQHACdcJhDD52Z5pCoSCj1S09vhzRZfL2kNJHJ-l8kL9cA/exec" \
-  --output ./output/elementi_report.pdf \
-  --title "Report campioni per elemento" \
-  --subtitle "Piccolo Museo della Tavola Periodica @ Biennale Tech 2026"
-echo ""
-echo "[10/${TOTAL_STEPS}] PDF report generated ✅"
-show_progress 10 "$TOTAL_STEPS"
+if [[ "$SKIP_PDF" -eq 1 ]]; then
+  echo "[9/${TOTAL_STEPS}] Skipping PDF report (flag enabled) ⏭️"
+  show_progress 9 "$TOTAL_STEPS"
+  echo ""
+  echo "[10/${TOTAL_STEPS}] PDF report skipped ✅"
+  show_progress 10 "$TOTAL_STEPS"
+else
+  echo "[9/${TOTAL_STEPS}] Generating PDF report..."
+  show_progress 9 "$TOTAL_STEPS"
+  python generate_pdf_report.py \
+    --api-url "https://script.google.com/macros/s/AKfycbz2T-xieiHlll6pCUfHaoP9GQHACdcJhDD52Z5pCoSCj1S09vhzRZfL2kNJHJ-l8kL9cA/exec" \
+    --output ./output/elementi_report.pdf \
+    --title "Report campioni per elemento" \
+    --subtitle "Piccolo Museo della Tavola Periodica @ Biennale Tech 2026"
+  echo ""
+  echo "[10/${TOTAL_STEPS}] PDF report generated ✅"
+  show_progress 10 "$TOTAL_STEPS"
+fi
 echo ""
 echo "[11/${TOTAL_STEPS}] Staging changes..."
 show_progress 11 "$TOTAL_STEPS"
