@@ -7,7 +7,7 @@
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:wght@400;600&display=swap');
 :root{
-  --cell-size: clamp(34px, 3.6vw, 78px);
+  --cell-size: clamp(30px, 3.2vw, 72px);
   --gap: 6px;
   --border-radius: 10px;
   --border-colour: rgba(17, 23, 32, 0.12);
@@ -18,18 +18,7 @@
   --accent-2: #f59e0b;
   --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --border-colour: rgba(255,255,255,0.15);
-    --empty-bg: #0f1115;
-    --ink: #e5e7eb;
-    --paper: #12151b;
-    --accent: #22d3ee;
-    --accent-2: #fbbf24;
-    --shadow: 0 12px 28px rgba(0,0,0,0.4);
-  }
-}
-body.dark{
+:root[data-theme="dark"]{
   --border-colour: rgba(255,255,255,0.15);
   --empty-bg: #0f1115;
   --ink: #e5e7eb;
@@ -38,7 +27,7 @@ body.dark{
   --accent-2: #fbbf24;
   --shadow: 0 12px 28px rgba(0,0,0,0.4);
 }
-body.light{
+:root[data-theme="light"]{
   --border-colour: rgba(17, 23, 32, 0.12);
   --empty-bg: #f6f7f9;
   --ink: #0f172a;
@@ -46,6 +35,17 @@ body.light{
   --accent: #0ea5a4;
   --accent-2: #f59e0b;
   --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]){
+    --border-colour: rgba(255,255,255,0.15);
+    --empty-bg: #0f1115;
+    --ink: #e5e7eb;
+    --paper: #12151b;
+    --accent: #22d3ee;
+    --accent-2: #fbbf24;
+    --shadow: 0 12px 28px rgba(0,0,0,0.4);
+  }
 }
 body{
   margin: 0;
@@ -58,7 +58,7 @@ body{
   overflow-x: hidden;
 }
 .page{
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px 18px 28px;
 }
@@ -150,7 +150,7 @@ h1{
   border-radius: 16px;
   box-shadow: var(--shadow);
   width: 100%;
-  max-width: 1200px;
+  max-width: 1100px;
 }
 .table{
   display: grid;
@@ -332,6 +332,19 @@ h1{
     padding: 8px 10px;
     border-radius: 8px;
     background: rgba(15,23,42,0.04);
+  }
+  .popup .sample-row{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .popup .sample-dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.15);
+    display: inline-block;
+    flex: 0 0 10px;
   }
   @media (prefers-color-scheme: dark){
     .popup li{
@@ -939,6 +952,43 @@ document.addEventListener('DOMContentLoaded', function() {
     statsEl.innerHTML = statHtml;
   }
 
+  const stateColors = {
+    'da-cercare': '#434343',
+    'da-comprare': '#e06666',
+    'in-arrivo': '#ffd966',
+    'ottenuto': '#93c47d',
+    'inventariato': '#a4c2f4'
+  };
+
+  function applyTheme(mode) {
+    const root = document.documentElement;
+    if (!root) return;
+    if (mode === 'dark' || mode === 'light') {
+      root.setAttribute('data-theme', mode);
+    } else {
+      root.removeAttribute('data-theme');
+    }
+    if (themeToggle) {
+      themeToggle.textContent = mode === 'dark' ? 'Light mode' : 'Dark mode';
+    }
+  }
+
+  function initTheme() {
+    if (!themeToggle) return;
+    const stored = localStorage.getItem('theme');
+    let mode = stored;
+    if (!mode) {
+      mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    applyTheme(mode);
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      applyTheme(next);
+    });
+  }
+
   async function loadLatestPagesDeploy() {
     if (!deployMetaEl) return;
     const owner = 'bagnasconicolo';
@@ -1017,7 +1067,9 @@ document.addEventListener('DOMContentLoaded', function() {
       info.samples.forEach((s, i) => {
         const st = s.state ? s.state : 'non definito';
         const val = s.value ? s.value : '—';
-        html += `<li><strong>Campione ${i+1}:</strong> ${st} · ${val}</li>`;
+        const key = st.replace(/\s+/g, '-').toLowerCase();
+        const color = stateColors[key] || '#e5e7eb';
+        html += `<li><span class="sample-row"><span class="sample-dot" style="background:${color}"></span><strong>Campione ${i+1}:</strong></span> ${st} · ${val}</li>`;
       });
       html += '</ul>';
       popup.innerHTML = html;
