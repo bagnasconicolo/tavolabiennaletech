@@ -98,7 +98,12 @@ if git status --porcelain -- . ':!logs' ':!.DS_Store' | grep -q .; then
   log_info "Git diff --stat:"
   git diff --stat -- . ':!logs' ':!.DS_Store' || true
 else
-  git pull >/dev/null
+  if git status --porcelain | grep -q .; then
+    log_info "Solo logs/.DS_Store sporchi: eseguo git pull con autostash"
+    git pull --rebase --autostash >/dev/null
+  else
+    git pull >/dev/null
+  fi
 fi
 log_ok "[4/${TOTAL_STEPS}] Repository aggiornato"
 show_progress 4 "$TOTAL_STEPS"
