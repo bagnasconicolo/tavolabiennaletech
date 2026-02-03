@@ -9,7 +9,7 @@
 :root{
   --cell-size: clamp(32px, 3.4vw, 74px);
   --gap: 6px;
-  --border-radius: 10px;
+  --border-radius: 6px;
   --border-colour: rgba(17, 23, 32, 0.12);
   --empty-bg: #f6f7f9;
   --ink: #0f172a;
@@ -99,9 +99,12 @@ h1{
   color: rgba(15,23,42,0.55);
   align-items: center;
 }
+:root[data-theme="dark"] .meta{
+  color: rgba(229,231,235,0.85);
+}
 @media (prefers-color-scheme: dark){
-  .meta{
-    color: rgba(229,231,235,0.6);
+  :root:not([data-theme]) .meta{
+    color: rgba(229,231,235,0.85);
   }
 }
 .toolbar{
@@ -376,7 +379,6 @@ h1{
   <div class="page">
     <section class="hero">
       <h1>Tracker progressi – Piccolo Museo della Tavola Periodica</h1>
-      <p class="subtitle">Biennale Tech 2026 · stato dei campioni e materiali</p>
       <div class="meta">
         <span id="deploy-meta">Ultimo deployment: in caricamento…</span>
         <span>Legenda interattiva e dettagli per elemento</span>
