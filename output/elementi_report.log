@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.24)  4 FEB 2026 18:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.24)  5 FEB 2026 11:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -282,82 +282,82 @@ LaTeX Font Info:    ... okay on input line 31.
 {/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
 
 [2] [3] [4]
-Underfull \hbox (badness 10000) in alignment at lines 645--645
+Underfull \hbox (badness 10000) in alignment at lines 646--646
 []
  []
 
 [5]
-Underfull \hbox (badness 10000) in alignment at lines 832--832
+Underfull \hbox (badness 10000) in alignment at lines 833--833
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 869--869
+Underfull \hbox (badness 10000) in alignment at lines 870--870
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 885--885
+Underfull \hbox (badness 10000) in alignment at lines 886--886
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 902--902
+Underfull \hbox (badness 10000) in alignment at lines 903--903
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 920--920
+Underfull \hbox (badness 10000) in alignment at lines 921--921
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 937--937
+Underfull \hbox (badness 10000) in alignment at lines 938--938
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 969--969
+Underfull \hbox (badness 10000) in alignment at lines 970--970
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 976--976
+Underfull \hbox (badness 10000) in alignment at lines 977--977
 []
  []
 
 [6] [7]
-Underfull \hbox (badness 10000) in alignment at lines 1018--1018
+Underfull \hbox (badness 10000) in alignment at lines 1019--1019
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1025--1025
+Underfull \hbox (badness 10000) in alignment at lines 1026--1026
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1059--1059
+Underfull \hbox (badness 10000) in alignment at lines 1060--1060
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1066--1066
+Underfull \hbox (badness 10000) in alignment at lines 1067--1067
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1114--1114
+Underfull \hbox (badness 10000) in alignment at lines 1115--1115
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1121--1121
+Underfull \hbox (badness 10000) in alignment at lines 1122--1122
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 1128--1128
+Underfull \hbox (badness 10000) in alignment at lines 1129--1129
 []
  []
 
@@ -376,7 +376,7 @@ e1/public/cm-super/sfbx0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1
 ublic/cm-super/sfrm0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/pub
 lic/cm-super/sfrm1000.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/publi
 c/cm-super/sfrm1200.pfb>
-Output written on output/elementi_report.pdf (8 pages, 113242 bytes).
+Output written on output/elementi_report.pdf (8 pages, 113383 bytes).
 PDF statistics:
  61 PDF objects out of 1000 (max. 8388607)
  39 compressed objects within 1 object stream
