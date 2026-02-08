@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.24)  7 FEB 2026 17:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.24)  8 FEB 2026 17:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -282,52 +282,27 @@ LaTeX Font Info:    ... okay on input line 31.
 {/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
 
 [2] [3] [4]
-Underfull \hbox (badness 10000) in alignment at lines 648--648
+Underfull \hbox (badness 10000) in alignment at lines 649--649
 []
  []
 
 [5]
-Underfull \hbox (badness 10000) in alignment at lines 875--875
+Underfull \hbox (badness 10000) in alignment at lines 876--876
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 891--891
+Underfull \hbox (badness 10000) in alignment at lines 930--930
 []
  []
 
 
-Underfull \hbox (badness 10000) in alignment at lines 908--908
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 926--926
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 943--943
+Underfull \hbox (badness 10000) in alignment at lines 947--947
 []
  []
 
 [6] [7]
-Underfull \hbox (badness 10000) in alignment at lines 983--983
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 1025--1025
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 1032--1032
-[]
- []
-
-
-Underfull \hbox (badness 10000) in alignment at lines 1144--1144
+Underfull \hbox (badness 10000) in alignment at lines 1159--1159
 []
  []
 
@@ -335,7 +310,7 @@ Underfull \hbox (badness 10000) in alignment at lines 1144--1144
 Here is how much of TeX's memory you used:
  3401 strings out of 476025
  51348 string characters out of 5790017
- 1883388 words of memory out of 5000000
+ 1884388 words of memory out of 5000000
  23852 multiletter control sequences out of 15000+600000
  519397 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -346,7 +321,7 @@ e1/public/cm-super/sfbx0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1
 ublic/cm-super/sfrm0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/pub
 lic/cm-super/sfrm1000.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/publi
 c/cm-super/sfrm1200.pfb>
-Output written on output/elementi_report.pdf (8 pages, 113847 bytes).
+Output written on output/elementi_report.pdf (8 pages, 114624 bytes).
 PDF statistics:
  61 PDF objects out of 1000 (max. 8388607)
  39 compressed objects within 1 object stream
