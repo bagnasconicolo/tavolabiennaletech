@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.24)  8 FEB 2026 17:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.24)  8 FEB 2026 17:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -296,32 +296,22 @@ Underfull \hbox (badness 10000) in alignment at lines 930--930
 []
  []
 
-
-Underfull \hbox (badness 10000) in alignment at lines 947--947
-[]
- []
-
-[6] [7]
-Underfull \hbox (badness 10000) in alignment at lines 1159--1159
-[]
- []
-
-[8] (output/elementi_report.aux) ) 
+[6] [7] [8] (output/elementi_report.aux) ) 
 Here is how much of TeX's memory you used:
  3401 strings out of 476025
  51348 string characters out of 5790017
- 1884388 words of memory out of 5000000
+ 1890388 words of memory out of 5000000
  23852 multiletter control sequences out of 15000+600000
  519397 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  57i,12n,62p,234b,413s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/local/texlive/2023/texmf-dist/fonts/typ
-e1/public/cm-super/sfbx0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1
-/public/cm-super/sfbx1728.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/p
-ublic/cm-super/sfrm0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/pub
-lic/cm-super/sfrm1000.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/publi
-c/cm-super/sfrm1200.pfb>
-Output written on output/elementi_report.pdf (8 pages, 114624 bytes).
+</usr/local/texlive/2023/texmf-dist/f
+onts/type1/public/cm-super/sfbx0900.pfb></usr/local/texlive/2023/texmf-dist/fon
+ts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive/2023/texmf-dist/fonts
+/type1/public/cm-super/sfrm0900.pfb></usr/local/texlive/2023/texmf-dist/fonts/t
+ype1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2023/texmf-dist/fonts/typ
+e1/public/cm-super/sfrm1200.pfb>
+Output written on output/elementi_report.pdf (8 pages, 114188 bytes).
 PDF statistics:
  61 PDF objects out of 1000 (max. 8388607)
  39 compressed objects within 1 object stream
